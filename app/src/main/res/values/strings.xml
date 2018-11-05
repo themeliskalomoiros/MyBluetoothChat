@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MyBluetoothChat</string>
+    <string name="available_devices_label">Available Devices:</string>
 </resources>
