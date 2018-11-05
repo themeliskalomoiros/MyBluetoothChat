@@ -5,10 +5,11 @@ import android.support.v7.widget.Toolbar;
 import java.util.List;
 
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.ViewMvc;
+import gr.kalymnos.sk3m3l10.mybluetoothchat.pojos.Message;
 
 public interface ChatScreenViewMvc extends ViewMvc {
 
-    interface OnSendClickListener{
+    interface OnSendClickListener {
         void onSendClicked(String msg);
     }
 
@@ -16,7 +17,7 @@ public interface ChatScreenViewMvc extends ViewMvc {
 
     void setOnSendClickListener(OnSendClickListener listener);
 
-    void bindMessages(List<String> messages);
+    void bindMessages(List<Message> messages);
 
     String getInsertedMessage();
 }
