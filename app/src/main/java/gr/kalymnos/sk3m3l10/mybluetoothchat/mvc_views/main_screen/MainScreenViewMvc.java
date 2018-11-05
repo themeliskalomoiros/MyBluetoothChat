@@ -12,9 +12,16 @@ public interface MainScreenViewMvc extends ViewMvc {
         void onBluetoothScan();
     }
 
+    interface OnDeviceItemClickListener {
+        void onDeviceItemClicked(int position);
+    }
+
     public Toolbar getToolbar();
+
+    void bindBluetoothDeviceNames(List<String> deviceNames);
 
     void setOnBluetoothScanClickListener(OnBluetoothScanClickListener listener);
 
-    void bindBluetoothDeviceNames(List<String> deviceNames);
+    void setOnDeviceItemClickListener(OnDeviceItemClickListener listener);
+
 }
