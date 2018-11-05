@@ -12,7 +12,7 @@ import java.util.List;
 
 import gr.kalymnos.sk3m3l10.mybluetoothchat.R;
 
-public class BluetoothDevicesAdapter extends RecyclerView.Adapter<BluetoothDevicesAdapter.DeviceHolder> {
+class BluetoothDevicesAdapter extends RecyclerView.Adapter<BluetoothDevicesAdapter.DeviceHolder> {
 
     private Context context;
     private List<String> deviceNames;

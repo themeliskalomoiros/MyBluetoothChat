@@ -45,16 +45,16 @@
         android:background="@color/primaryLightColor"
         android:padding="4dp"
         android:hint="@string/type_a_msg_label"
-        app:layout_constraintBottom_toBottomOf="@+id/floatingActionButton"
-        app:layout_constraintEnd_toStartOf="@+id/floatingActionButton"
+        app:layout_constraintBottom_toBottomOf="@+id/sendButton"
+        app:layout_constraintEnd_toStartOf="@+id/sendButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/floatingActionButton"
+        app:layout_constraintTop_toTopOf="@+id/sendButton"
         android:inputType="text"
         android:autofillHints="@string/type_a_msg_label" />
 
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/sendButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"

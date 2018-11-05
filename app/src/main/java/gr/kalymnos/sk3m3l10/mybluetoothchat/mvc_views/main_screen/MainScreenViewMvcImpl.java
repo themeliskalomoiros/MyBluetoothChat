@@ -77,7 +77,6 @@ public class MainScreenViewMvcImpl implements MainScreenViewMvc {
 
     private void initializeRecyclerView() {
         recyclerView = root.findViewById(R.id.recyclerView);
-        recyclerView = root.findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
         adapter = new BluetoothDevicesAdapter(root.getContext());
         recyclerView.setAdapter(adapter);
