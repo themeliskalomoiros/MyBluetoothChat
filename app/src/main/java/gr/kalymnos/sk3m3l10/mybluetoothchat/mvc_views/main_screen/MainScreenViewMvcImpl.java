@@ -1,6 +1,7 @@
 package gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen;
 
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +16,13 @@ import gr.kalymnos.sk3m3l10.mybluetoothchat.R;
 public class MainScreenViewMvcImpl implements MainScreenViewMvc {
 
     private View root;
-    private RecyclerView recyclerView;
     private ProgressBar progressBar;
     private Toolbar toolbar;
+
+    private RecyclerView recyclerView;
+    private BluetoothDevicesAdapter adapter;
+
+    private OnBluetoothScanClickListener onBluetoothScanClickListener;
     private FloatingActionButton scanFab;
 
     public MainScreenViewMvcImpl(LayoutInflater inflater, ViewGroup container) {
@@ -30,13 +35,23 @@ public class MainScreenViewMvcImpl implements MainScreenViewMvc {
     }
 
     @Override
-    public void setOnBluetoothScanClickListener(OnBluetoothScanClickListener listener) {
+    public void setOnBluetoothScanClickListener(final OnBluetoothScanClickListener listener) {
+        if (listener != null) {
+            scanFab.setOnClickListener((view) -> listener.onBluetoothScan());
+        }
+    }
 
+    @Override
+    public void setOnDeviceItemClickListener(OnDeviceItemClickListener listener) {
+        if (listener!=null){
+            adapter.setOnItemClickListener(listener);
+        }
     }
 
     @Override
     public void bindBluetoothDeviceNames(List<String> deviceNames) {
-
+        adapter.addDeviceNames(deviceNames);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -46,9 +61,20 @@ public class MainScreenViewMvcImpl implements MainScreenViewMvc {
 
     private void initializeViews(LayoutInflater inflater, ViewGroup container) {
         root = inflater.inflate(R.layout.activity_main, container, false);
-        recyclerView = root.findViewById(R.id.recyclerView);
         progressBar = root.findViewById(R.id.progressBar);
         toolbar = root.findViewById(R.id.toolbar);
         scanFab = root.findViewById(R.id.scanFab);
+        initializeRecyclerView();
     }
+
+    private void initializeRecyclerView() {
+        recyclerView = root.findViewById(R.id.recyclerView);
+        recyclerView = root.findViewById(R.id.recyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
+        adapter = new BluetoothDevicesAdapter(root.getContext());
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+    }
+
 }
