@@ -21,8 +21,6 @@ public class MainScreenViewMvcImpl implements MainScreenViewMvc {
 
     private RecyclerView recyclerView;
     private BluetoothDevicesAdapter adapter;
-
-    private OnBluetoothScanClickListener onBluetoothScanClickListener;
     private FloatingActionButton scanFab;
 
     public MainScreenViewMvcImpl(LayoutInflater inflater, ViewGroup container) {
@@ -35,9 +33,9 @@ public class MainScreenViewMvcImpl implements MainScreenViewMvc {
     }
 
     @Override
-    public void setOnBluetoothScanClickListener(final OnBluetoothScanClickListener listener) {
+    public void setOnBluetoothScanClickListener(OnBluetoothScanClickListener listener) {
         if (listener != null) {
-            scanFab.setOnClickListener((view) -> listener.onBluetoothScan());
+            scanFab.setOnClickListener((view) -> listener.onBluetoothScanClicked());
         }
     }
 
