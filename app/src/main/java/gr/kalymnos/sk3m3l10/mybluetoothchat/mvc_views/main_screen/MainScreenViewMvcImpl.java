@@ -3,11 +3,11 @@ package gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toolbar;
 
 import java.util.List;
 
@@ -43,9 +43,19 @@ public class MainScreenViewMvcImpl implements MainScreenViewMvc {
 
     @Override
     public void setOnDeviceItemClickListener(OnDeviceItemClickListener listener) {
-        if (listener!=null){
+        if (listener != null) {
             adapter.setOnItemClickListener(listener);
         }
+    }
+
+    @Override
+    public void showLoadingIndicator() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideLoadingIndicator() {
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override

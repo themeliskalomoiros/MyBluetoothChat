@@ -1,6 +1,7 @@
 package gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen;
 
-import android.widget.Toolbar;
+
+import android.support.v7.widget.Toolbar;
 
 import java.util.List;
 
@@ -23,5 +24,9 @@ public interface MainScreenViewMvc extends ViewMvc {
     void setOnBluetoothScanClickListener(OnBluetoothScanClickListener listener);
 
     void setOnDeviceItemClickListener(OnDeviceItemClickListener listener);
+
+    void showLoadingIndicator();
+
+    void hideLoadingIndicator();
 
 }
