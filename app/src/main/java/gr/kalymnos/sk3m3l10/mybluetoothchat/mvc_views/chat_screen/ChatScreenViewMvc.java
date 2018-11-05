@@ -18,6 +18,4 @@ public interface ChatScreenViewMvc extends ViewMvc {
     void setOnSendClickListener(OnSendClickListener listener);
 
     void bindMessages(List<Message> messages);
-
-    String getInsertedMessage();
 }
