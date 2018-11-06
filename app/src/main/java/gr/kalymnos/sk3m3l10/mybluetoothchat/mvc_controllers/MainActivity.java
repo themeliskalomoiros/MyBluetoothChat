@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         super.onCreate(savedInstanceState);
         setupUi();
         bluetoothService = new FakeBluetoothServiceImpl(new Handler());
+        showPairedDevicesToList();
     }
 
     @Override
@@ -64,6 +65,12 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
     @Override
     public void onDeviceItemClicked(int position) {
         Toast.makeText(this, "Clicked item at position " + position, Toast.LENGTH_SHORT).show();
+    }
+
+    private void showPairedDevicesToList() {
+        Set<BluetoothDevice> pairedDevices = bluetoothService.getPairedDevices();
+        devices.addAll(pairedDevices);
+        viewMvc.bindBluetoothDeviceNames(BluetoothDeviceUtils.getDeviceNamesList(devices));
     }
 
     private void setupUi() {

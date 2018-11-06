@@ -54,24 +54,22 @@ class BluetoothDevicesAdapter extends RecyclerView.Adapter<BluetoothDevicesAdapt
         onDeviceItemClickListener = listener;
     }
 
-    class DeviceHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class DeviceHolder extends RecyclerView.ViewHolder {
 
         private TextView deviceName;
 
         public DeviceHolder(@NonNull View itemView) {
             super(itemView);
+            itemView.setOnClickListener((view) -> {
+                if (onDeviceItemClickListener != null) {
+                    onDeviceItemClickListener.onDeviceItemClicked(getAdapterPosition());
+                }
+            });
             deviceName = itemView.findViewById(R.id.device_name);
         }
 
         public void bindDeviceName(String deviceName) {
             this.deviceName.setText(deviceName);
-        }
-
-        @Override
-        public void onClick(View view) {
-            if (onDeviceItemClickListener != null) {
-                onDeviceItemClickListener.onDeviceItemClicked(getAdapterPosition());
-            }
         }
     }
 }
