@@ -84,8 +84,8 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
     }
 
     private void checkLocationPermissionToStartDiscoverDevices() {
-        boolean permissionNotGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED;
+        boolean permissionNotGranted = ContextCompat.checkSelfPermission
+                (this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED;
         if (permissionNotGranted) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_COARSE_LOCATION);
         } else {
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
                 if (permissionGranted) {
                     bluetoothService.startDiscovery();
                 } else {
-                    Snackbar.make(viewMvc.getRootView(), R.string.location_permition_not_granted, Snackbar.LENGTH_INDEFINITE).show();
+                    Snackbar.make(viewMvc.getRootView(), R.string.location_permition_not_granted, Snackbar.LENGTH_LONG).show();
                 }
         }
     }
@@ -134,6 +134,15 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
 
     @Override
     public void onBluetoothScanClicked() {
+        boolean permissionForLocationNotGranted = ContextCompat.checkSelfPermission
+                (this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED;
+
+        if (permissionForLocationNotGranted) {
+            Snackbar locationPermissionSnackbar = Snackbar.make(viewMvc.getRootView(), R.string.location_permition_not_granted, Snackbar.LENGTH_INDEFINITE);
+            locationPermissionSnackbar.setAction(R.string.ask_permition_label, (view) -> checkLocationPermissionToStartDiscoverDevices());
+            locationPermissionSnackbar.show();
+            return;
+        }
         if (bluetoothService.isDiscovering()) {
             Snackbar.make(viewMvc.getRootView(), R.string.discovery_in_progress_label, Snackbar.LENGTH_SHORT).show();
         } else {
