@@ -1,7 +1,9 @@
 package gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Handler;
 
@@ -38,6 +40,10 @@ public abstract class BluetoothService {
             return true;
         }
         return false;
+    }
+
+    public Set<BluetoothDevice> getPairedDevices() {
+        return bluetoothAdapter.getBondedDevices();
     }
 
 }
