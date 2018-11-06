@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         setupUi();
         bluetoothService = new BluetoothServiceImpl(new Handler());
         setupBluetoothRadio();
+        tryToSetDeviceAsDiscoverable();
         getAndDisplayPairedDevices();
         registerDiscoverDevicesReceiver();
         // Because via bluetooth you are able to get a device's location android
@@ -162,6 +163,9 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         if (!bluetoothService.isBluetoothEnabled()) {
             startActivityForResult(new Intent(ACTION_REQUEST_ENABLE), REQUEST_CODE_ENABLE_BT);
         }
+    }
+
+    private void tryToSetDeviceAsDiscoverable() {
         Intent discoverableIntent = new Intent(ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(EXTRA_DISCOVERABLE_DURATION, DISCOVERABLE_TIME_IN_SECONDS);
         startActivityForResult(discoverableIntent, REQUEST_CODE_DISCOVERABLE);
