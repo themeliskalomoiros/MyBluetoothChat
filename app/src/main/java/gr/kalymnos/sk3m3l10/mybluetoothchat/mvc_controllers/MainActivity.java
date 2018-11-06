@@ -16,9 +16,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
-import android.widget.Toast;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import gr.kalymnos.sk3m3l10.mybluetoothchat.R;
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
     private MainScreenViewMvc viewMvc;
 
     private BluetoothService bluetoothService;
-    private Set<BluetoothDevice> devices = new HashSet<>();
+    private List<BluetoothDevice> devices = new ArrayList<>();
 
     private final BroadcastReceiver discoverDevicesReceiver = new BroadcastReceiver() {
         @Override
@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
                 // According to the docs " your activity then receives a call to the onActivityResult
                 // with the result code equal to the ducation that the device is discoverable."
                 if (resultCode == DISCOVERABLE_TIME_IN_SECONDS) {
+                    bluetoothService.startDiscovery();
                     bluetoothService.startServerMode();
                 } else if (resultCode == RESULT_CANCELED) {
                     Snackbar enableBluetoothSnackbar = Snackbar.make(viewMvc.getRootView(), R.string.device_discoverable_disabled_label, Snackbar.LENGTH_INDEFINITE);
@@ -164,7 +165,8 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
 
     @Override
     public void onDeviceItemClicked(int position) {
-        Toast.makeText(this, "Clicked item at position " + position, Toast.LENGTH_SHORT).show();
+        bluetoothService.startClientMode(devices.get(position));
+
     }
 
     private void setupBluetoothRadio() {
