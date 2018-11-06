@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         setupUi();
         bluetoothService = new BluetoothServiceImpl(new Handler());
         setupBluetoothRadio();
-        tryToSetDeviceAsDiscoverable();
         getAndDisplayPairedDevices();
         registerDiscoverDevicesReceiver();
         // Because via bluetooth you are able to get a device's location android
@@ -110,18 +109,30 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode) {
+            case REQUEST_CODE_DISCOVERABLE:
+                // According to the docs " your activity then receives a call to the onActivityResult
+                // with the result code equal to the ducation that the device is discoverable."
+                if (resultCode == DISCOVERABLE_TIME_IN_SECONDS) {
+                    Snackbar.make(viewMvc.getRootView(), R.string.device_discoverable_enabled_label, Snackbar.LENGTH_SHORT).show();
+                } else if (resultCode == RESULT_CANCELED) {
+                    Snackbar enableBluetoothSnackbar = Snackbar.make(viewMvc.getRootView(), R.string.device_discoverable_disabled_label, Snackbar.LENGTH_INDEFINITE);
+                    enableBluetoothSnackbar.setAction(R.string.enable_label, (view) -> startActivityForResult(new Intent(ACTION_REQUEST_ENABLE), REQUEST_CODE_ENABLE_BT));
+                    enableBluetoothSnackbar.show();
+                }
+                break;
+
             case REQUEST_CODE_ENABLE_BT:
                 if (resultCode == RESULT_OK) {
                     Snackbar.make(viewMvc.getRootView(), R.string.bluetooth_enabled_label, Snackbar.LENGTH_SHORT).show();
+                    // Reaching this point means that the Bluetooth was always disabled and just got
+                    // enabled, so we start a discovery automatically.
+                    if (!bluetoothService.isDiscovering()) {
+                        bluetoothService.startDiscovery();
+                    }
                 } else if (resultCode == RESULT_CANCELED) {
-                    Snackbar.make(viewMvc.getRootView(), R.string.bluetooth_enabled_canceld_label, Snackbar.LENGTH_LONG).show();
-                }
-                break;
-            case REQUEST_CODE_DISCOVERABLE:
-                if (resultCode == RESULT_OK) {
-                    Snackbar.make(viewMvc.getRootView(), R.string.device_discoverable_enabled_label, Snackbar.LENGTH_SHORT).show();
-                } else if (resultCode == RESULT_CANCELED) {
-                    Snackbar.make(viewMvc.getRootView(), R.string.device_discoverable_disabled_label, Snackbar.LENGTH_LONG).show();
+                    Snackbar enableBluetoothSnackbar = Snackbar.make(viewMvc.getRootView(), R.string.bluetooth_enabled_canceld_label, Snackbar.LENGTH_INDEFINITE);
+                    enableBluetoothSnackbar.setAction(R.string.enable_label, (view) -> startActivityForResult(new Intent(ACTION_REQUEST_ENABLE), REQUEST_CODE_ENABLE_BT));
+                    enableBluetoothSnackbar.show();
                 }
                 break;
         }
@@ -161,7 +172,8 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
             Snackbar.make(viewMvc.getRootView(), R.string.bluetooth_not_supported_label, Snackbar.LENGTH_LONG).show();
         }
         if (!bluetoothService.isBluetoothEnabled()) {
-            startActivityForResult(new Intent(ACTION_REQUEST_ENABLE), REQUEST_CODE_ENABLE_BT);
+            // Setting device as discoverable auto-enables the Bluetooth
+            tryToSetDeviceAsDiscoverable();
         }
     }
 
