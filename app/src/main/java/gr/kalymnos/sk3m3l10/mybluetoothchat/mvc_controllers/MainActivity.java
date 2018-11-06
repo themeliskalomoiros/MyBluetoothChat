@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.widget.Toast;
@@ -25,7 +27,9 @@ import gr.kalymnos.sk3m3l10.mybluetoothchat.utils.BluetoothDeviceUtils;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_DEVICE_FOUND;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_DISCOVERY_FINISHED;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_DISCOVERY_STARTED;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_REQUEST_ENABLE;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.EXTRA_DEVICE;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.REQUEST_CODE_ENABLE_BT;
 
 public class MainActivity extends AppCompatActivity implements MainScreenViewMvc.OnDeviceItemClickListener,
         MainScreenViewMvc.OnBluetoothScanClickListener {
@@ -59,8 +63,22 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         super.onCreate(savedInstanceState);
         setupUi();
         bluetoothService = new FakeBluetoothServiceImpl(new Handler());
-        showPairedDevicesToList();
+        setupBluetoothRadio();
+        getAndDisplayPairedDevices();
         registerDiscoverDevicesReceiver();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode) {
+            case REQUEST_CODE_ENABLE_BT:
+                if (resultCode == RESULT_OK) {
+                    Snackbar.make(viewMvc.getRootView(), R.string.bluetooth_enabled_label, Snackbar.LENGTH_SHORT).show();
+                } else if (resultCode == RESULT_CANCELED) {
+                    Snackbar.make(viewMvc.getRootView(), R.string.bluetooth_enabled_canceld_label, Snackbar.LENGTH_LONG).show();
+                }
+                break;
+        }
     }
 
     @Override
@@ -79,7 +97,16 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         Toast.makeText(this, "Clicked item at position " + position, Toast.LENGTH_SHORT).show();
     }
 
-    private void showPairedDevicesToList() {
+    private void setupBluetoothRadio() {
+        if (!bluetoothService.isBluetoothSupported()) {
+            Snackbar.make(viewMvc.getRootView(), R.string.bluetooth_not_supported_label, Snackbar.LENGTH_LONG).show();
+        }
+        if (!bluetoothService.isBluetoothEnabled()) {
+            startActivityForResult(new Intent(ACTION_REQUEST_ENABLE), REQUEST_CODE_ENABLE_BT);
+        }
+    }
+
+    private void getAndDisplayPairedDevices() {
         Set<BluetoothDevice> pairedDevices = bluetoothService.getPairedDevices();
         devices.addAll(pairedDevices);
         viewMvc.bindBluetoothDeviceNames(BluetoothDeviceUtils.getDeviceNamesList(devices));

@@ -4,4 +4,7 @@
     <string name="content_description">content description value</string>
     <string name="type_a_msg_label">Type a message</string>
     <string name="discovery_started_label">Discovering bluetooth devices</string>
+    <string name="bluetooth_not_supported_label">Your device does not support Bluetooth</string>
+    <string name="bluetooth_enabled_label">Bluetooth enabled</string>
+    <string name="bluetooth_enabled_canceld_label">Bluetooth must be activated in order to communicate</string>
 </resources>
