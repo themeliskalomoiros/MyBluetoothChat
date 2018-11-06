@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
                 // According to the docs " your activity then receives a call to the onActivityResult
                 // with the result code equal to the ducation that the device is discoverable."
                 if (resultCode == DISCOVERABLE_TIME_IN_SECONDS) {
-                    Snackbar.make(viewMvc.getRootView(), R.string.device_discoverable_enabled_label, Snackbar.LENGTH_SHORT).show();
+                    bluetoothService.startServerMode();
                 } else if (resultCode == RESULT_CANCELED) {
                     Snackbar enableBluetoothSnackbar = Snackbar.make(viewMvc.getRootView(), R.string.device_discoverable_disabled_label, Snackbar.LENGTH_INDEFINITE);
                     enableBluetoothSnackbar.setAction(R.string.enable_label, (view) -> startActivityForResult(new Intent(ACTION_REQUEST_ENABLE), REQUEST_CODE_ENABLE_BT));
