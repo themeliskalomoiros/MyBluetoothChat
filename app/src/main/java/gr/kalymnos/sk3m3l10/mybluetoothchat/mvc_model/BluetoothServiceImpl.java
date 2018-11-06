@@ -3,8 +3,8 @@ package gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 
-public class FakeBluetoothServiceImpl extends BluetoothService {
-    public FakeBluetoothServiceImpl(Handler handler) {
+public class BluetoothServiceImpl extends BluetoothService {
+    public BluetoothServiceImpl(Handler handler) {
         super(handler);
     }
 

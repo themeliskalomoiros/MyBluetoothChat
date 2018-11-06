@@ -23,7 +23,7 @@ import java.util.Set;
 
 import gr.kalymnos.sk3m3l10.mybluetoothchat.R;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService;
-import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.FakeBluetoothServiceImpl;
+import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothServiceImpl;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen.MainScreenViewMvc;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen.MainScreenViewMvcImpl;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.utils.BluetoothDeviceUtils;
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupUi();
-        bluetoothService = new FakeBluetoothServiceImpl(new Handler());
+        bluetoothService = new BluetoothServiceImpl(new Handler());
         setupBluetoothRadio();
         getAndDisplayPairedDevices();
         registerDiscoverDevicesReceiver();
