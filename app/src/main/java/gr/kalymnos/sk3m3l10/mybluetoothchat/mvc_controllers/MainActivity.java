@@ -27,8 +27,12 @@ import gr.kalymnos.sk3m3l10.mybluetoothchat.utils.BluetoothDeviceUtils;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_DEVICE_FOUND;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_DISCOVERY_FINISHED;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_DISCOVERY_STARTED;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_REQUEST_DISCOVERABLE;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_REQUEST_ENABLE;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.DISCOVERABLE_TIME_IN_SECONDS;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.EXTRA_DEVICE;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.EXTRA_DISCOVERABLE_DURATION;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.REQUEST_CODE_DISCOVERABLE;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.REQUEST_CODE_ENABLE_BT;
 
 public class MainActivity extends AppCompatActivity implements MainScreenViewMvc.OnDeviceItemClickListener,
@@ -78,6 +82,13 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
                     Snackbar.make(viewMvc.getRootView(), R.string.bluetooth_enabled_canceld_label, Snackbar.LENGTH_LONG).show();
                 }
                 break;
+            case REQUEST_CODE_DISCOVERABLE:
+                if (resultCode == RESULT_OK) {
+                    Snackbar.make(viewMvc.getRootView(), R.string.device_discoverable_enabled_label, Snackbar.LENGTH_SHORT).show();
+                } else if (resultCode == RESULT_CANCELED) {
+                    Snackbar.make(viewMvc.getRootView(), R.string.device_discoverable_disabled_label, Snackbar.LENGTH_LONG).show();
+                }
+                break;
         }
     }
 
@@ -104,6 +115,9 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         if (!bluetoothService.isBluetoothEnabled()) {
             startActivityForResult(new Intent(ACTION_REQUEST_ENABLE), REQUEST_CODE_ENABLE_BT);
         }
+        Intent discoverableIntent = new Intent(ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(EXTRA_DISCOVERABLE_DURATION, DISCOVERABLE_TIME_IN_SECONDS);
+        startActivityForResult(discoverableIntent, REQUEST_CODE_DISCOVERABLE);
     }
 
     private void getAndDisplayPairedDevices() {

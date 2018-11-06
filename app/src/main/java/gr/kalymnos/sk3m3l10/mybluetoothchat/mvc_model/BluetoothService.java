@@ -15,6 +15,7 @@ public abstract class BluetoothService {
 
     public static final String ACTION_REQUEST_ENABLE = BluetoothAdapter.ACTION_REQUEST_ENABLE;
     public static final String ACTION_REQUEST_DISCOVERABLE = BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE;
+    public static final String EXTRA_DISCOVERABLE_DURATION = BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION;
     public static final int DISCOVERABLE_TIME_IN_SECONDS = 3600;
     public static final String ACTION_DISCOVERY_STARTED = BluetoothAdapter.ACTION_DISCOVERY_STARTED;
     public static final String ACTION_DISCOVERY_FINISHED = BluetoothAdapter.ACTION_DISCOVERY_FINISHED;
@@ -22,6 +23,7 @@ public abstract class BluetoothService {
     public static final String EXTRA_DEVICE = BluetoothDevice.EXTRA_DEVICE;
     public static final String EXTRA_CLASS = BluetoothDevice.EXTRA_CLASS;
     public static final int REQUEST_CODE_ENABLE_BT = 155;
+    public static final int REQUEST_CODE_DISCOVERABLE = 156;
 
     private BluetoothAdapter bluetoothAdapter;
     private Handler handler;
