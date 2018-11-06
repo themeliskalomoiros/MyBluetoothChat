@@ -15,6 +15,8 @@ public interface ChatScreenViewMvc extends ViewMvc {
 
     Toolbar getToolbar();
 
+    void bindToolbarTitle(String title);
+
     void setOnSendClickListener(OnSendClickListener listener);
 
     void bindMessages(List<Message> messages);

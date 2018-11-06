@@ -34,6 +34,11 @@ public class ChatScreenViewMvcImpl implements ChatScreenViewMvc {
     }
 
     @Override
+    public void bindToolbarTitle(String title) {
+        toolbar.setTitle(title);
+    }
+
+    @Override
     public void setOnSendClickListener(OnSendClickListener listener) {
         if (listener != null) {
             sendFab.setOnClickListener((view) -> listener.onSendClicked(insertedTextField.getText().toString()));
