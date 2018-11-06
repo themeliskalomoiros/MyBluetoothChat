@@ -5,7 +5,7 @@ import android.bluetooth.BluetoothDevice;
 
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Handler;
+import android.os.Handler;
 
 public abstract class BluetoothService {
 
