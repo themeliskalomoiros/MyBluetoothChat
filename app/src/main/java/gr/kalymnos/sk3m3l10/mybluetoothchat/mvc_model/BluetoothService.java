@@ -17,20 +17,6 @@ public abstract class BluetoothService {
 
     protected static final String TAG = "BluetoothService";
 
-    private static final UUID SECURE_UUID = UUID.fromString("a80ea0da-e1a2-11e8-9f32-f2801f1b9fd1");
-
-    public static final String ACTION_REQUEST_ENABLE = BluetoothAdapter.ACTION_REQUEST_ENABLE;
-    public static final String ACTION_REQUEST_DISCOVERABLE = BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE;
-    public static final String EXTRA_DISCOVERABLE_DURATION = BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION;
-    public static final int DISCOVERABLE_TIME_IN_SECONDS = 3600;
-    public static final String ACTION_DISCOVERY_STARTED = BluetoothAdapter.ACTION_DISCOVERY_STARTED;
-    public static final String ACTION_DISCOVERY_FINISHED = BluetoothAdapter.ACTION_DISCOVERY_FINISHED;
-    public static final String ACTION_DEVICE_FOUND = BluetoothDevice.ACTION_FOUND;
-    public static final String EXTRA_DEVICE = BluetoothDevice.EXTRA_DEVICE;
-    public static final String EXTRA_CLASS = BluetoothDevice.EXTRA_CLASS;
-    public static final int REQUEST_CODE_ENABLE_BT = 155;
-    public static final int REQUEST_CODE_DISCOVERABLE = 156;
-
     private BluetoothAdapter bluetoothAdapter;
     protected Handler handler;
 
@@ -40,7 +26,7 @@ public abstract class BluetoothService {
     }
 
     public UUID getUuid() {
-        return SECURE_UUID;
+        return BluetoothConstants.SECURE_UUID;
     }
 
     public boolean isBluetoothSupported() {

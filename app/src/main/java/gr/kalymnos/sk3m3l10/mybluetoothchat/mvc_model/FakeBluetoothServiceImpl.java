@@ -15,6 +15,6 @@ public class FakeBluetoothServiceImpl extends BluetoothService {
 
     @Override
     protected void manageClientsConnectedSocket(BluetoothSocket bluetoothSocket) {
-        
+
     }
 }

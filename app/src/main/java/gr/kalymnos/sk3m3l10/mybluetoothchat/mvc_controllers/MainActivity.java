@@ -28,16 +28,16 @@ import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen.MainScreenView
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen.MainScreenViewMvcImpl;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.utils.BluetoothDeviceUtils;
 
-import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_DEVICE_FOUND;
-import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_DISCOVERY_FINISHED;
-import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_DISCOVERY_STARTED;
-import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_REQUEST_DISCOVERABLE;
-import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_REQUEST_ENABLE;
-import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.DISCOVERABLE_TIME_IN_SECONDS;
-import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.EXTRA_DEVICE;
-import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.EXTRA_DISCOVERABLE_DURATION;
-import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.REQUEST_CODE_DISCOVERABLE;
-import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.REQUEST_CODE_ENABLE_BT;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_DEVICE_FOUND;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_DISCOVERY_FINISHED;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_DISCOVERY_STARTED;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_REQUEST_DISCOVERABLE;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_REQUEST_ENABLE;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.DISCOVERABLE_TIME_IN_SECONDS;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Extras.EXTRA_DEVICE;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Extras.EXTRA_DISCOVERABLE_DURATION;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.RequestCodes.REQUEST_CODE_DISCOVERABLE;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.RequestCodes.REQUEST_CODE_ENABLE_BT;
 
 public class MainActivity extends AppCompatActivity implements MainScreenViewMvc.OnDeviceItemClickListener,
         MainScreenViewMvc.OnBluetoothScanClickListener {
