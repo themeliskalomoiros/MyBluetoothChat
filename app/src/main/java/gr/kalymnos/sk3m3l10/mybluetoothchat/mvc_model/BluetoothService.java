@@ -89,7 +89,7 @@ public abstract class BluetoothService {
         return bluetoothAdapter.isDiscovering();
     }
 
-    protected abstract void manageClientsConnectedSocket(BluetoothSocket bluetoothSocket);
+    protected abstract void manageClientsConnectedSocket(String deviceName, BluetoothSocket bluetoothSocket);
 
     protected abstract void manageServersConnectedSocket(BluetoothSocket socket);
 
@@ -186,7 +186,7 @@ public abstract class BluetoothService {
 
             // The connection attempt succeeded. Perform work associated with
             // the connection in a separate thread.
-            manageClientsConnectedSocket(bluetoothSocket);
+            manageClientsConnectedSocket(connectedDevice.getName(), bluetoothSocket);
         }
 
         // Closes the client socket and causes the thread to finish
