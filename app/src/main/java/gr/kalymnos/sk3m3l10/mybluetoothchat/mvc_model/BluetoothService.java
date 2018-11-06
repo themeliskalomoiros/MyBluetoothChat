@@ -3,6 +3,7 @@ package gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.Handler;
+import android.util.Log;
 
 import java.util.Set;
 import java.util.UUID;
@@ -53,6 +54,18 @@ public abstract class BluetoothService {
 
     public Set<BluetoothDevice> getPairedDevices() {
         return bluetoothAdapter.getBondedDevices();
+    }
+
+    public boolean startDiscovery() {
+        return bluetoothAdapter.startDiscovery();
+    }
+
+    public void cancelDiscovery() {
+        bluetoothAdapter.cancelDiscovery();
+    }
+
+    public boolean isDiscovering(){
+        return bluetoothAdapter.isDiscovering();
     }
 
 }
