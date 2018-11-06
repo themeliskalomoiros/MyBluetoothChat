@@ -20,6 +20,8 @@ public abstract class BluetoothService {
     private BluetoothAdapter bluetoothAdapter;
     protected Handler handler;
 
+    private Thread serverThread, clientThread;
+
     public BluetoothService(Handler handler) {
         this.handler = handler;
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -43,6 +45,34 @@ public abstract class BluetoothService {
         return false;
     }
 
+    public void startServerMode() {
+        if (serverThread == null) {
+            serverThread = new ServerThread();
+            serverThread.start();
+        }
+    }
+
+    public void stopServerMode() {
+        if (serverThread != null) {
+            ((ServerThread) serverThread).cancel();
+            serverThread = null;
+        }
+    }
+
+    public void startClientMode(BluetoothDevice deviceToConnect) {
+        if (clientThread == null) {
+            clientThread = new ClientThread(deviceToConnect);
+            clientThread.start();
+        }
+    }
+
+    public void stopClientMode() {
+        if (clientThread != null) {
+            ((ClientThread) clientThread).cancel();
+            clientThread = null;
+        }
+    }
+
     public Set<BluetoothDevice> getPairedDevices() {
         return bluetoothAdapter.getBondedDevices();
     }
@@ -58,6 +88,10 @@ public abstract class BluetoothService {
     public boolean isDiscovering() {
         return bluetoothAdapter.isDiscovering();
     }
+
+    protected abstract void manageClientsConnectedSocket(BluetoothSocket bluetoothSocket);
+
+    protected abstract void manageServersConnectedSocket(BluetoothSocket socket);
 
     private class ServerThread extends Thread {
         private final BluetoothServerSocket serverSocket;
@@ -111,10 +145,9 @@ public abstract class BluetoothService {
         }
     }
 
-    protected abstract void manageServersConnectedSocket(BluetoothSocket socket);
-
     private class ClientThread extends Thread {
         private final BluetoothSocket bluetoothSocket;
+
         private final BluetoothDevice connectedDevice;
 
         public ClientThread(BluetoothDevice device) {
@@ -164,8 +197,7 @@ public abstract class BluetoothService {
                 Log.e(TAG, "Could not close the connect socket", e);
             }
         }
-    }
 
-    protected abstract void manageClientsConnectedSocket(BluetoothSocket bluetoothSocket);
+    }
 
 }
