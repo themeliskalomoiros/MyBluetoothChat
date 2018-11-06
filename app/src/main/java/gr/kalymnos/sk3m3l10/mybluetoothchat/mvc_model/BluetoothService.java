@@ -11,7 +11,7 @@ public abstract class BluetoothService {
 
     protected static final String TAG = "BluetoothService";
 
-    private static final UUID INSECURE_UUID = UUID.fromString("8b10b125-076a41a2b1ca-7c37b56bc3a7");
+    private static final UUID INSECURE_UUID = UUID.fromString("a80ea0da-e1a2-11e8-9f32-f2801f1b9fd1");
 
     public static final String ACTION_REQUEST_ENABLE = BluetoothAdapter.ACTION_REQUEST_ENABLE;
     public static final String ACTION_DISCOVERY_STARTED = BluetoothAdapter.ACTION_DISCOVERY_STARTED;
