@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -14,12 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import gr.kalymnos.sk3m3l10.mybluetoothchat.R;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.FakeBluetoothServiceImpl;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen.MainScreenViewMvc;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen.MainScreenViewMvcImpl;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.utils.BluetoothDeviceUtils;
-import gr.kalymnos.sk3m3l10.mybluetoothchat.R;
 
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_DEVICE_FOUND;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_DISCOVERY_FINISHED;
@@ -59,6 +60,13 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         setupUi();
         bluetoothService = new FakeBluetoothServiceImpl(new Handler());
         showPairedDevicesToList();
+        registerDiscoverDevicesReceiver();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(discoverDevicesReceiver);
     }
 
     @Override
@@ -75,6 +83,15 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         Set<BluetoothDevice> pairedDevices = bluetoothService.getPairedDevices();
         devices.addAll(pairedDevices);
         viewMvc.bindBluetoothDeviceNames(BluetoothDeviceUtils.getDeviceNamesList(devices));
+    }
+
+    private void registerDiscoverDevicesReceiver() {
+        IntentFilter filterFound = new IntentFilter(ACTION_DEVICE_FOUND);
+        IntentFilter filterDiscoveryStarted = new IntentFilter(ACTION_DISCOVERY_STARTED);
+        IntentFilter filterDiscoveryFinished = new IntentFilter(ACTION_DISCOVERY_FINISHED);
+        registerReceiver(discoverDevicesReceiver, filterDiscoveryStarted);
+        registerReceiver(discoverDevicesReceiver, filterFound);
+        registerReceiver(discoverDevicesReceiver, filterDiscoveryFinished);
     }
 
     private void setupUi() {
