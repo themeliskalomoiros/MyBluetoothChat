@@ -19,6 +19,7 @@ import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.FakeBluetoothServiceImpl;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen.MainScreenViewMvc;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen.MainScreenViewMvcImpl;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.utils.BluetoothDeviceUtils;
+import gr.kalymnos.sk3m3l10.mybluetoothchat.R;
 
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_DEVICE_FOUND;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.ACTION_DISCOVERY_FINISHED;
@@ -38,12 +39,15 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
                 case ACTION_DISCOVERY_STARTED:
+                    viewMvc.showLoadingIndicator();
+                    Toast.makeText(context, R.string.discovery_started_label, Toast.LENGTH_SHORT).show();
                     break;
                 case ACTION_DEVICE_FOUND:
                     BluetoothDevice foundDevice = intent.getParcelableExtra(EXTRA_DEVICE);
                     devices.add(foundDevice);
                     break;
                 case ACTION_DISCOVERY_FINISHED:
+                    viewMvc.hideLoadingIndicator();
                     break;
             }
         }

@@ -3,4 +3,5 @@
     <string name="available_devices_label">Available Devices:</string>
     <string name="content_description">content description value</string>
     <string name="type_a_msg_label">Type a message</string>
+    <string name="discovery_started_label">Discovering bluetooth devices</string>
 </resources>
