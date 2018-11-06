@@ -9,4 +9,6 @@
     <string name="bluetooth_enabled_canceld_label">Bluetooth must be activated in order to communicate</string>
     <string name="device_discoverable_enabled_label">Others can see you and are able to connect with you</string>
     <string name="device_discoverable_disabled_label">Others cannot see your device and therefore are unable to connect with you</string>
+    <string name="location_permition_not_granted">Permission needed to start scanning for nearby devices</string>
+    <string name="discovery_in_progress_label">Discovery in progress</string>
 </resources>

@@ -1,20 +1,24 @@
 package gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_controllers;
 
+import android.Manifest;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import gr.kalymnos.sk3m3l10.mybluetoothchat.R;
@@ -38,10 +42,11 @@ import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService.RE
 public class MainActivity extends AppCompatActivity implements MainScreenViewMvc.OnDeviceItemClickListener,
         MainScreenViewMvc.OnBluetoothScanClickListener {
 
+    private static final int REQUEST_CODE_COARSE_LOCATION = 123;
     private MainScreenViewMvc viewMvc;
 
     private BluetoothService bluetoothService;
-    private List<BluetoothDevice> devices = new ArrayList<>();
+    private Set<BluetoothDevice> devices = new HashSet<>();
 
     private final BroadcastReceiver discoverDevicesReceiver = new BroadcastReceiver() {
         @Override
@@ -49,11 +54,14 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
             switch (intent.getAction()) {
                 case ACTION_DISCOVERY_STARTED:
                     viewMvc.showLoadingIndicator();
-                    Toast.makeText(context, R.string.discovery_started_label, Toast.LENGTH_SHORT).show();
+                    // Sometimes devices get disconnected so when the discovery starts the list
+                    // must be reset
+                    devices.clear();
                     break;
                 case ACTION_DEVICE_FOUND:
                     BluetoothDevice foundDevice = intent.getParcelableExtra(EXTRA_DEVICE);
                     devices.add(foundDevice);
+                    viewMvc.bindBluetoothDeviceNames(BluetoothDeviceUtils.getDeviceNamesList(devices));
                     break;
                 case ACTION_DISCOVERY_FINISHED:
                     viewMvc.hideLoadingIndicator();
@@ -70,6 +78,32 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         setupBluetoothRadio();
         getAndDisplayPairedDevices();
         registerDiscoverDevicesReceiver();
+        // Because via bluetooth you are able to get a device's location android
+        // needs to get user's permission at runtime
+        checkLocationPermissionToStartDiscoverDevices();
+    }
+
+    private void checkLocationPermissionToStartDiscoverDevices() {
+        boolean permissionNotGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED;
+        if (permissionNotGranted) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_COARSE_LOCATION);
+        } else {
+            bluetoothService.startDiscovery();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_COARSE_LOCATION:
+                boolean permissionGranted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                if (permissionGranted) {
+                    bluetoothService.startDiscovery();
+                } else {
+                    Snackbar.make(viewMvc.getRootView(), R.string.location_permition_not_granted, Snackbar.LENGTH_INDEFINITE).show();
+                }
+        }
     }
 
     @Override
@@ -100,7 +134,11 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
 
     @Override
     public void onBluetoothScanClicked() {
-        Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show();
+        if (bluetoothService.isDiscovering()) {
+            Snackbar.make(viewMvc.getRootView(), R.string.discovery_in_progress_label, Snackbar.LENGTH_SHORT).show();
+        } else {
+            bluetoothService.startDiscovery();
+        }
     }
 
     @Override
