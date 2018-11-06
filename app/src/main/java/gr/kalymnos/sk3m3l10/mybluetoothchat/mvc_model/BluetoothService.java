@@ -2,17 +2,22 @@ package gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
+import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.util.Log;
 
+import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
+
+import gr.kalymnos.sk3m3l10.mybluetoothchat.BuildConfig;
 
 public abstract class BluetoothService {
 
     protected static final String TAG = "BluetoothService";
 
-    private static final UUID INSECURE_UUID = UUID.fromString("a80ea0da-e1a2-11e8-9f32-f2801f1b9fd1");
+    private static final UUID SECURE_UUID = UUID.fromString("a80ea0da-e1a2-11e8-9f32-f2801f1b9fd1");
 
     public static final String ACTION_REQUEST_ENABLE = BluetoothAdapter.ACTION_REQUEST_ENABLE;
     public static final String ACTION_REQUEST_DISCOVERABLE = BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE;
@@ -27,7 +32,7 @@ public abstract class BluetoothService {
     public static final int REQUEST_CODE_DISCOVERABLE = 156;
 
     private BluetoothAdapter bluetoothAdapter;
-    private Handler handler;
+    protected Handler handler;
 
     public BluetoothService(Handler handler) {
         this.handler = handler;
@@ -35,7 +40,7 @@ public abstract class BluetoothService {
     }
 
     public UUID getUuid() {
-        return INSECURE_UUID;
+        return SECURE_UUID;
     }
 
     public boolean isBluetoothSupported() {
@@ -64,8 +69,62 @@ public abstract class BluetoothService {
         bluetoothAdapter.cancelDiscovery();
     }
 
-    public boolean isDiscovering(){
+    public boolean isDiscovering() {
         return bluetoothAdapter.isDiscovering();
     }
+
+    private class ServerThread extends Thread {
+        private final BluetoothServerSocket serverSocket;
+
+        ServerThread() {
+            // Using temp varialbe because serverSocket is final
+            BluetoothServerSocket tmp = null;
+            try {
+                tmp = bluetoothAdapter.listenUsingRfcommWithServiceRecord(BuildConfig.APPLICATION_ID, getUuid());
+            } catch (IOException e) {
+                Log.e(TAG, "Socket's listen() method failed", e);
+            }
+            serverSocket = tmp;
+        }
+
+        @Override
+        public void run() {
+            BluetoothSocket socket;
+            // Keep listening until exception occurs or a socket is returned.
+            while (true) {
+                try {
+                    socket = serverSocket.accept();
+                } catch (IOException e) {
+                    Log.e(TAG, "Socket's accept() method failed", e);
+                    break;
+                }
+                if (socket != null) {
+                    // A connection was accepted. Perform work associated with the connection
+                    // in a seperate thread.
+                    manageServersConnectedSocket(socket);
+                    try {
+                        // We do not need any more connections because we will chat only with
+                        // this device, so we close the server socket because it consumes hell of resources.
+                        serverSocket.close();
+                    } catch (IOException e) {
+                        Log.e(TAG, "Could not close() the server socket");
+                    }
+                    break;
+                }
+            }
+
+        }
+
+        // Closes the connect socket and causes the thread to finish
+        public void cancel() {
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Could not close the connect socket", e);
+            }
+        }
+    }
+
+    protected abstract void manageServersConnectedSocket(BluetoothSocket socket);
 
 }
