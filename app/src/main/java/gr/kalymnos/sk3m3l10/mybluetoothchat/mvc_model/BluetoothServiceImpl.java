@@ -1,6 +1,7 @@
 package gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model;
 
 import android.bluetooth.BluetoothSocket;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
@@ -17,9 +18,14 @@ public class BluetoothServiceImpl extends BluetoothService {
     }
 
     @Override
-    protected void manageClientsConnectedSocket(BluetoothSocket bluetoothSocket) {
+    protected void manageClientsConnectedSocket(String deviceName, BluetoothSocket bluetoothSocket) {
         Message message = handler.obtainMessage();
-        message.what=HandlerConstants.CONNECTION_SUCCESS;
+        message.what = HandlerConstants.CONNECTION_SUCCESS;
+        Bundle bundle = new Bundle();
+        bundle.putString(BluetoothConstants.Extras.EXTRA_DEVICE, deviceName);
+        bundle.putParcelable(BluetoothConstants.Extras.EXTRA_SOCKET_WRAPPER,
+                new ParcelableBluetoothSocketWrapper(bluetoothSocket));
+        message.setData(bundle);
         handler.sendMessage(message);
     }
 }

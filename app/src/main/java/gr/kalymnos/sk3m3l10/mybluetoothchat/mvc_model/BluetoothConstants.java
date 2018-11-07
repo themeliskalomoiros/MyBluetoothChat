@@ -22,6 +22,7 @@ public interface BluetoothConstants {
         String EXTRA_DISCOVERABLE_DURATION = BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION;
         String EXTRA_DEVICE = BluetoothDevice.EXTRA_DEVICE;
         String EXTRA_CLASS = BluetoothDevice.EXTRA_CLASS;
+        String EXTRA_SOCKET_WRAPPER = "EXTRA SOCKET WRAPPER";
     }
 
     interface RequestCodes {
