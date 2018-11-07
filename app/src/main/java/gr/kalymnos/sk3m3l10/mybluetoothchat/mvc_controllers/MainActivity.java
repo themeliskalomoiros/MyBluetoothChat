@@ -2,6 +2,7 @@ package gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_controllers;
 
 import android.Manifest;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,16 +17,19 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import gr.kalymnos.sk3m3l10.mybluetoothchat.R;
+import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothServiceImpl;
+import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.ParcelableBluetoothSocketWrapper;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen.MainScreenViewMvc;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen.MainScreenViewMvcImpl;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.utils.BluetoothDeviceUtils;
@@ -48,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
     private MainScreenViewMvc viewMvc;
 
     private BluetoothService bluetoothService;
-    private List<BluetoothDevice> devices = new ArrayList<>();
+    private Set<BluetoothDevice> devices = new LinkedHashSet<>();
 
     private final BroadcastReceiver discoverDevicesReceiver = new BroadcastReceiver() {
         @Override
@@ -56,9 +60,6 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
             switch (intent.getAction()) {
                 case ACTION_DISCOVERY_STARTED:
                     viewMvc.showLoadingIndicator();
-                    // Sometimes devices get disconnected so when the discovery starts the list
-                    // must be reset
-                    devices.clear();
                     break;
                 case ACTION_DEVICE_FOUND:
                     BluetoothDevice foundDevice = intent.getParcelableExtra(EXTRA_DEVICE);
@@ -167,7 +168,8 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
 
     @Override
     public void onDeviceItemClicked(int position) {
-        bluetoothService.startClientMode(devices.get(position));
+        List<BluetoothDevice> devicesList = new ArrayList<>(devices);
+        bluetoothService.startClientMode(devicesList.get(position));
     }
 
     private void setupBluetoothRadio() {
@@ -187,8 +189,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
     }
 
     private void getAndDisplayPairedDevices() {
-        Set<BluetoothDevice> pairedDevices = bluetoothService.getPairedDevices();
-        devices.addAll(pairedDevices);
+        devices.addAll(bluetoothService.getPairedDevices());
         viewMvc.bindBluetoothDeviceNames(BluetoothDeviceUtils.getDeviceNamesList(devices));
     }
 
@@ -213,13 +214,15 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         viewMvc.setOnDeviceItemClickListener(this);
     }
 
-    private class MainActivityHandler extends Handler{
+    private class MainActivityHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case HandlerConstants.CONNECTION_SUCCESS:
-                    Toast.makeText(MainActivity.this, "CONNECTION SUCCESS!", Toast.LENGTH_SHORT).show();
-                    break;
+                    Log.d("malakia",msg.getData().getString(BluetoothConstants.Extras.EXTRA_DEVICE)!=null?"Υπάρχει device name":"Δεν υπάρχει device name");
+                    Intent intent = new Intent(MainActivity.this,ChatActivity.class);
+                    intent.putExtras(msg.getData());
+                    MainActivity.this.startActivity(intent);
             }
         }
     }
