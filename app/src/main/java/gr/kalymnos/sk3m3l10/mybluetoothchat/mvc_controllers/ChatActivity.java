@@ -23,6 +23,11 @@ public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc
         setupUi();
     }
 
+    @Override
+    public void onSendClicked(String msg) {
+        Toast.makeText(this, "clicked!", Toast.LENGTH_SHORT).show();
+    }
+
     private void setupUi() {
         initializeViewMvc();
         setSupportActionBar(viewMvc.getToolbar());
@@ -33,11 +38,6 @@ public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc
     private void initializeViewMvc() {
         viewMvc = new ChatScreenViewMvcImpl(LayoutInflater.from(this), null);
         viewMvc.setOnSendClickListener(this);
-    }
-
-    @Override
-    public void onSendClicked(String msg) {
-        Toast.makeText(this, "clicked!", Toast.LENGTH_SHORT).show();
     }
 
     private String getDeviceName() {

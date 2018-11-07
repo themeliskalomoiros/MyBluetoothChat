@@ -2,7 +2,6 @@ package gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_controllers;
 
 import android.Manifest;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +16,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 
 import java.util.ArrayList;
@@ -26,10 +24,8 @@ import java.util.List;
 import java.util.Set;
 
 import gr.kalymnos.sk3m3l10.mybluetoothchat.R;
-import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothServiceImpl;
-import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.ParcelableBluetoothSocketWrapper;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen.MainScreenViewMvc;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen.MainScreenViewMvcImpl;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.utils.BluetoothDeviceUtils;
@@ -49,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         MainScreenViewMvc.OnBluetoothScanClickListener {
 
     private static final int REQUEST_CODE_COARSE_LOCATION = 123;
+
     private MainScreenViewMvc viewMvc;
 
     private BluetoothService bluetoothService;
@@ -112,31 +109,28 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode) {
-            case REQUEST_CODE_DISCOVERABLE:
-                // According to the docs " your activity then receives a call to the onActivityResult
-                // with the result code equal to the ducation that the device is discoverable."
-                if (resultCode == DISCOVERABLE_TIME_IN_SECONDS) {
+            case REQUEST_CODE_ENABLE_BT:
+                if (resultCode == RESULT_OK) {
+                    // Reaching this point Bluetooth enabled for the first time.
+                    // Start a discovery automatically.
                     bluetoothService.startDiscovery();
-                    bluetoothService.startServerMode();
+                    askUserToSetDeviceAsDiscoverable();
                 } else if (resultCode == RESULT_CANCELED) {
-                    Snackbar enableBluetoothSnackbar = Snackbar.make(viewMvc.getRootView(), R.string.device_discoverable_disabled_label, Snackbar.LENGTH_INDEFINITE);
+                    Snackbar enableBluetoothSnackbar = Snackbar.make(viewMvc.getRootView(), R.string.bluetooth_enabled_canceld_label, Snackbar.LENGTH_INDEFINITE);
                     enableBluetoothSnackbar.setAction(R.string.enable_label, (view) -> startActivityForResult(new Intent(ACTION_REQUEST_ENABLE), REQUEST_CODE_ENABLE_BT));
                     enableBluetoothSnackbar.show();
                 }
                 break;
 
-            case REQUEST_CODE_ENABLE_BT:
-                if (resultCode == RESULT_OK) {
-                    Snackbar.make(viewMvc.getRootView(), R.string.bluetooth_enabled_label, Snackbar.LENGTH_SHORT).show();
-                    // Reaching this point means that the Bluetooth was always disabled and just got
-                    // enabled, so we start a discovery automatically.
-                    if (!bluetoothService.isDiscovering()) {
-                        bluetoothService.startDiscovery();
-                    }
+            case REQUEST_CODE_DISCOVERABLE:
+                // According to the docs " your activity then receives a call to the onActivityResult
+                // with the result code equal to the ducation that the device is discoverable."
+                if (resultCode == DISCOVERABLE_TIME_IN_SECONDS) {
+                    bluetoothService.startServerMode();
                 } else if (resultCode == RESULT_CANCELED) {
-                    Snackbar enableBluetoothSnackbar = Snackbar.make(viewMvc.getRootView(), R.string.bluetooth_enabled_canceld_label, Snackbar.LENGTH_INDEFINITE);
-                    enableBluetoothSnackbar.setAction(R.string.enable_label, (view) -> startActivityForResult(new Intent(ACTION_REQUEST_ENABLE), REQUEST_CODE_ENABLE_BT));
-                    enableBluetoothSnackbar.show();
+                    Snackbar whyEnableDiscoverabillitySnackbar = Snackbar.make(viewMvc.getRootView(), R.string.device_discoverable_disabled_label, Snackbar.LENGTH_LONG);
+                    whyEnableDiscoverabillitySnackbar.setAction(R.string.enable_label, (view) -> askUserToSetDeviceAsDiscoverable());
+                    whyEnableDiscoverabillitySnackbar.show();
                 }
                 break;
         }
@@ -148,17 +142,28 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         unregisterReceiver(discoverDevicesReceiver);
     }
 
+    private void setupBluetoothRadio() {
+        if (!bluetoothService.isBluetoothSupported()) {
+            Snackbar.make(viewMvc.getRootView(), R.string.bluetooth_not_supported_label, Snackbar.LENGTH_LONG).show();
+        }
+        if (!bluetoothService.isBluetoothEnabled()) {
+            startActivityForResult(new Intent(ACTION_REQUEST_ENABLE), REQUEST_CODE_ENABLE_BT);
+        } else {
+            askUserToSetDeviceAsDiscoverable();
+        }
+    }
+
     @Override
     public void onBluetoothScanClicked() {
         boolean permissionForLocationNotGranted = ContextCompat.checkSelfPermission
                 (this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED;
-
         if (permissionForLocationNotGranted) {
             Snackbar locationPermissionSnackbar = Snackbar.make(viewMvc.getRootView(), R.string.location_permition_not_granted, Snackbar.LENGTH_INDEFINITE);
             locationPermissionSnackbar.setAction(R.string.ask_permition_label, (view) -> checkLocationPermissionToStartDiscoverDevices());
             locationPermissionSnackbar.show();
             return;
         }
+
         if (bluetoothService.isDiscovering()) {
             Snackbar.make(viewMvc.getRootView(), R.string.discovery_in_progress_label, Snackbar.LENGTH_SHORT).show();
         } else {
@@ -172,17 +177,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         bluetoothService.startClientMode(devicesList.get(position));
     }
 
-    private void setupBluetoothRadio() {
-        if (!bluetoothService.isBluetoothSupported()) {
-            Snackbar.make(viewMvc.getRootView(), R.string.bluetooth_not_supported_label, Snackbar.LENGTH_LONG).show();
-        }
-        if (!bluetoothService.isBluetoothEnabled()) {
-            // Setting device as discoverable auto-enables the Bluetooth
-            tryToSetDeviceAsDiscoverable();
-        }
-    }
-
-    private void tryToSetDeviceAsDiscoverable() {
+    private void askUserToSetDeviceAsDiscoverable() {
         Intent discoverableIntent = new Intent(ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(EXTRA_DISCOVERABLE_DURATION, DISCOVERABLE_TIME_IN_SECONDS);
         startActivityForResult(discoverableIntent, REQUEST_CODE_DISCOVERABLE);
@@ -219,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case HandlerConstants.CONNECTION_SUCCESS:
-                    Intent intent = new Intent(MainActivity.this,ChatActivity.class);
+                    Intent intent = new Intent(MainActivity.this, ChatActivity.class);
                     intent.putExtras(msg.getData());
                     MainActivity.this.startActivity(intent);
             }

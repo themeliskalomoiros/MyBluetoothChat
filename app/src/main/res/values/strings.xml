@@ -8,7 +8,7 @@
     <string name="bluetooth_enabled_label">Bluetooth enabled.</string>
     <string name="bluetooth_enabled_canceld_label">Must activate Bluetooth to communicate with others.</string>
     <string name="device_discoverable_enabled_label">Others can see you and connect with you.</string>
-    <string name="device_discoverable_disabled_label">Enable Bluetooth to scan for other devices.</string>
+    <string name="device_discoverable_disabled_label">Enable discoverability to be visible to others.</string>
     <string name="location_permition_not_granted">Need permission for Bluetooth scan.</string>
     <string name="discovery_in_progress_label">Discovery in progress</string>
     <string name="ask_permition_label">Ask for permission</string>

@@ -26,6 +26,6 @@ public class BluetoothServiceImpl extends BluetoothService {
         bundle.putParcelable(BluetoothConstants.Extras.EXTRA_SOCKET_WRAPPER,
                 new ParcelableBluetoothSocketWrapper(bluetoothSocket));
         message.setData(bundle);
-        handler.sendMessage(message);
+        message.sendToTarget();
     }
 }
