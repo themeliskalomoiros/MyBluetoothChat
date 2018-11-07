@@ -219,7 +219,6 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case HandlerConstants.CONNECTION_SUCCESS:
-                    Log.d("malakia",msg.getData().getString(BluetoothConstants.Extras.EXTRA_DEVICE)!=null?"Υπάρχει device name":"Δεν υπάρχει device name");
                     Intent intent = new Intent(MainActivity.this,ChatActivity.class);
                     intent.putExtras(msg.getData());
                     MainActivity.this.startActivity(intent);
