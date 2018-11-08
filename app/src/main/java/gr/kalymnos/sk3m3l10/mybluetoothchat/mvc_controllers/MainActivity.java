@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -42,7 +41,7 @@ import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.RequestCodes.REQUEST_CODE_ENABLE_BT;
 
 public class MainActivity extends AppCompatActivity implements MainScreenViewMvc.OnDeviceItemClickListener,
-        MainScreenViewMvc.OnBluetoothScanClickListener {
+        MainScreenViewMvc.OnBluetoothScanClickListener, HandlerProvider {
 
     private static final int REQUEST_CODE_COARSE_LOCATION = 123;
 
@@ -74,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupUi();
-        bluetoothService = new BluetoothServiceImpl(new MainActivityHandler());
+        bluetoothService = new BluetoothServiceImpl(new LocalHandler());
         setupBluetoothRadio();
         getAndDisplayPairedDevices();
         registerDiscoverDevicesReceiver();
@@ -209,15 +208,18 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         viewMvc.setOnDeviceItemClickListener(this);
     }
 
-    private class MainActivityHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
+    @Override
+    public Handler getHandler() {
+        return new Handler((msg) -> {
             switch (msg.what) {
                 case HandlerConstants.CONNECTION_SUCCESS:
                     Intent intent = new Intent(MainActivity.this, ChatActivity.class);
                     intent.putExtras(msg.getData());
                     MainActivity.this.startActivity(intent);
+                    break;
             }
-        }
+            // True if no further handling is desired
+            return true;
+        });
     }
 }

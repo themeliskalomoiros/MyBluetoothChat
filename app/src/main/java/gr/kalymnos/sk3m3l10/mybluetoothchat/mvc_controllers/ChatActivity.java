@@ -2,6 +2,7 @@ package gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_controllers;
 
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.widget.Toast;
@@ -11,7 +12,8 @@ import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.ParcelableBluetoothSocketW
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.chat_screen.ChatScreenViewMvc;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.chat_screen.ChatScreenViewMvcImpl;
 
-public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc.OnSendClickListener {
+public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc.OnSendClickListener,
+        HandlerProvider {
 
     private ChatScreenViewMvc viewMvc;
     private BluetoothSocket bluetoothSocket;
@@ -19,7 +21,7 @@ public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        bluetoothSocket=getBluetoothSocket();
+        bluetoothSocket = getBluetoothSocket();
         setupUi();
     }
 
@@ -57,5 +59,16 @@ public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc
             return wrapper.getSocket();
         }
         return null;
+    }
+
+    @Override
+    public Handler getHandler() {
+        return new Handler((msg) -> {
+            switch (msg.what) {
+
+            }
+            // True if no further handling is desired
+            return true;
+        });
     }
 }
