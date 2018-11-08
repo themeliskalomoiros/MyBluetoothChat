@@ -18,13 +18,20 @@ public abstract class BluetoothService {
     protected static final String TAG = "BluetoothService";
 
     private BluetoothAdapter bluetoothAdapter;
-    protected Handler handler;
+    protected Handler mainScreenHandler, chatScreenHandler;
 
     private Thread serverThread, clientThread;
 
-    public BluetoothService(Handler handler) {
-        this.handler = handler;
+    protected BluetoothService() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    }
+
+    public void setMainScreenHandler(Handler mainScreenHandler) {
+        this.mainScreenHandler = mainScreenHandler;
+    }
+
+    public void setChatScreenHandler(Handler chatScreenHandler) {
+        this.chatScreenHandler = chatScreenHandler;
     }
 
     public UUID getUuid() {
