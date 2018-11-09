@@ -16,6 +16,7 @@ import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothServiceImpl;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.chat_screen.ChatScreenViewMvc;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.chat_screen.ChatScreenViewMvcImpl;
 
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_DISCONNECTED;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_MESSAGE_RECEIVED;
 
 public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc.OnSendClickListener {
@@ -30,6 +31,10 @@ public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc
                 case ACTION_MESSAGE_RECEIVED:
                     // TODO: Display the message
                     Toast.makeText(context, intent.getStringExtra(BluetoothConstants.Extras.EXTRA_MESSAGE), Toast.LENGTH_SHORT).show();
+                    break;
+                case ACTION_DISCONNECTED:
+                    // TODO: Display the message
+                    Toast.makeText(context, "Disconnected!", Toast.LENGTH_SHORT).show();
                     break;
             }
         }
@@ -50,8 +55,10 @@ public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc
     }
 
     private void registerMessageReceiver() {
-        IntentFilter filter = new IntentFilter(ACTION_MESSAGE_RECEIVED);
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, filter);
+        IntentFilter messageFilter = new IntentFilter(ACTION_MESSAGE_RECEIVED);
+        IntentFilter disconnectionFilter = new IntentFilter(ACTION_DISCONNECTED);
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, disconnectionFilter);
     }
 
     @Override
