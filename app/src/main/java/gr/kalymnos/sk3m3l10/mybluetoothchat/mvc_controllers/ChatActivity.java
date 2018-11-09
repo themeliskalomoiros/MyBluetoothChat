@@ -81,6 +81,6 @@ public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        bluetoothService.disconnectFromConnectedDevice();
+        bluetoothService.releaseChatResources();
     }
 }

@@ -32,7 +32,7 @@ public abstract class BluetoothService {
 
     public abstract void write(byte[] bytes);
 
-    public abstract void disconnectFromConnectedDevice();
+    public abstract void releaseChatResources();
 
 
     protected Context getContext() {
