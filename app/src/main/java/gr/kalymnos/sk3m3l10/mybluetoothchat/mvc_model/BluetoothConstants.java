@@ -11,18 +11,20 @@ public interface BluetoothConstants {
     int DISCOVERABLE_TIME_IN_SECONDS = 3600;
 
     interface Actions {
-        String ACTION_REQUEST_ENABLE = BluetoothAdapter.ACTION_REQUEST_ENABLE;
-        String ACTION_DISCOVERY_FINISHED = BluetoothAdapter.ACTION_DISCOVERY_FINISHED;
-        String ACTION_REQUEST_DISCOVERABLE = BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE;
-        String ACTION_DISCOVERY_STARTED = BluetoothAdapter.ACTION_DISCOVERY_STARTED;
+        String ACTION_CLIENT_CONNECTED = "action client connected";
+        String ACTION_SERVER_CONNECTED = "action server connected";
         String ACTION_DEVICE_FOUND = BluetoothDevice.ACTION_FOUND;
+        String ACTION_DISCOVERY_STARTED = BluetoothAdapter.ACTION_DISCOVERY_STARTED;
+        String ACTION_DISCOVERY_FINISHED = BluetoothAdapter.ACTION_DISCOVERY_FINISHED;
+        String ACTION_REQUEST_ENABLE = BluetoothAdapter.ACTION_REQUEST_ENABLE;
+        String ACTION_REQUEST_DISCOVERABLE = BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE;
     }
 
     interface Extras {
-        String EXTRA_DISCOVERABLE_DURATION = BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION;
         String EXTRA_DEVICE = BluetoothDevice.EXTRA_DEVICE;
-        String EXTRA_CLASS = BluetoothDevice.EXTRA_CLASS;
-        String EXTRA_SOCKET_WRAPPER = "EXTRA SOCKET WRAPPER";
+        String EXTRA_DEVICE_NAME = "extra device name";
+        String EXTRA_SOCKET_WRAPPER = "extra socket wrapper";
+        String EXTRA_DISCOVERABLE_DURATION = BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION;
     }
 
     interface RequestCodes {
