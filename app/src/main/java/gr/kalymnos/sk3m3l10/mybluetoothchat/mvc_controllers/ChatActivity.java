@@ -64,7 +64,7 @@ public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc
 
     @Override
     public void onSendClicked(String msg) {
-        bluetoothService.write(msg.getBytes());
+        bluetoothService.write(msg);
     }
 
     private void setupUi() {

@@ -140,9 +140,9 @@ public class BluetoothServiceImpl extends BluetoothService {
     }
 
     @Override
-    public void write(byte[] bytes) {
+    public void write(String message) {
         if (chatManager != null) {
-            chatManager.write(bytes);
+            chatManager.write(message.getBytes());
         }
     }
 

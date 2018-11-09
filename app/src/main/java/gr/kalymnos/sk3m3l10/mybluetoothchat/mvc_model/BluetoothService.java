@@ -30,7 +30,7 @@ public abstract class BluetoothService {
 
     protected abstract void manageServersConnectedSocket(BluetoothSocket socket);
 
-    public abstract void write(byte[] bytes);
+    public abstract void write(String message);
 
     public abstract void releaseChatResources();
 
