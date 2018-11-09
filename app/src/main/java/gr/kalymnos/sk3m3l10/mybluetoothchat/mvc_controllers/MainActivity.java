@@ -191,8 +191,10 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
 
     @Override
     public void onDeviceItemClicked(int position) {
-        List<BluetoothDevice> devicesList = new ArrayList<>(devices);
-        bluetoothService.startClientMode(devicesList.get(position));
+        if (devices.size()>0){
+            List<BluetoothDevice> devicesList = new ArrayList<>(devices);
+            bluetoothService.startClientMode(devicesList.get(position));
+        }
     }
 
     private void askUserToSetDeviceAsDiscoverable() {
