@@ -3,18 +3,20 @@ package gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_CLIENT_CONNECTED;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_SERVER_CONNECTED;
-import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Extras.EXTRA_DEVICE_NAME;
-import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Extras.EXTRA_SOCKET_WRAPPER;
 
 public class BluetoothServiceImpl extends BluetoothService {
 
     private static BluetoothService instance = null;
+    private ConnectionManager connectionManager;
 
     private BluetoothServiceImpl(Context context) {
         super(context);
@@ -30,29 +32,108 @@ public class BluetoothServiceImpl extends BluetoothService {
     @Override
     protected void manageServersConnectedSocket(BluetoothSocket socket) {
         Intent serverData = new Intent(ACTION_SERVER_CONNECTED);
-        serverData.putExtras(bundleServerData(socket));
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(serverData);
+        startConnectionManager(socket);
     }
 
     @Override
-    protected void manageClientsConnectedSocket(String deviceName, BluetoothSocket socket) {
+    protected void manageClientsConnectedSocket(BluetoothSocket socket) {
         Intent clientData = new Intent(ACTION_CLIENT_CONNECTED);
-        clientData.putExtras(bundleClientData(deviceName, socket));
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(clientData);
+        startConnectionManager(socket);
     }
 
-    @NonNull
-    private Bundle bundleServerData(BluetoothSocket socket) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(EXTRA_SOCKET_WRAPPER, new ParcelableBluetoothSocketWrapper(socket));
-        return bundle;
+    public void startConnectionManager(BluetoothSocket socket) {
+        if (connectionManager == null) {
+            connectionManager = new ConnectionManager(socket);
+            connectionManager.start();
+        }
     }
 
-    @NonNull
-    private Bundle bundleClientData(String deviceName, BluetoothSocket bluetoothSocket) {
-        Bundle extras = new Bundle();
-        extras.putString(EXTRA_DEVICE_NAME, deviceName);
-        extras.putParcelable(EXTRA_SOCKET_WRAPPER, new ParcelableBluetoothSocketWrapper(bluetoothSocket));
-        return extras;
+    public void stopConnectionManager() {
+        if (connectionManager != null) {
+            connectionManager.cancel();
+            connectionManager = null;
+        }
+    }
+
+    private class ConnectionManager extends Thread {
+        private static final int BUFFER_SIZE = 1024;
+
+        private final BluetoothSocket socket;
+
+        private final InputStream inputStream;
+        private final OutputStream outputStream;
+        private byte[] buffer; // Buffer to store the stream
+
+        public ConnectionManager(BluetoothSocket socket) {
+            this.socket = socket;
+            InputStream tmpIn = null;
+            OutputStream tmpOut = null;
+
+            // Get input and output streams; using temp objects
+            // because member streams are final
+            try {
+                tmpIn = socket.getInputStream();
+            } catch (IOException e) {
+                Log.e(TAG, "Error occured when creating input stream", e);
+            }
+
+            try {
+                tmpOut = socket.getOutputStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(TAG, "Error occured when creating output stream", e);
+            }
+
+            inputStream = tmpIn;
+            outputStream = tmpOut;
+        }
+
+        @Override
+        public void run() {
+            buffer = new byte[BUFFER_SIZE];
+
+            // Keep listening to the inputStream until an exception occurs.
+            while (true) {
+                try {
+                    inputStream.read(buffer);
+                    broadcastReceivedMessage();
+                } catch (IOException e) {
+                    Log.d(TAG, "Input stream was disconnected", e);
+                    break;
+                }
+            }
+        }
+
+        private void broadcastReceivedMessage() {
+            Intent intent = new Intent(BluetoothConstants.Actions.ACTION_MESSAGE_RECEIVED);
+            intent.putExtra(BluetoothConstants.Extras.EXTRA_MESSAGE,new String(buffer));
+            LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+        }
+
+        private void write(byte[] bytes) {
+            try {
+                outputStream.write(bytes);
+            } catch (IOException e) {
+                Log.e(TAG, "Error occured when sending data");
+            }
+        }
+
+        private void cancel() {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Could not close the connect socket", e);
+            }
+        }
+
+    }
+
+    @Override
+    public void write(byte[] bytes) {
+        if (connectionManager != null) {
+            connectionManager.write(bytes);
+        }
     }
 }

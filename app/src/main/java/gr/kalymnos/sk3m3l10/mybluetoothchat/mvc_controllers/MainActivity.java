@@ -78,11 +78,9 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
 
             switch (intent.getAction()) {
                 case ACTION_CLIENT_CONNECTED:
-                    chatActivityIntent.putExtras(intent.getExtras());
                     startActivity(chatActivityIntent);
                     break;
                 case ACTION_SERVER_CONNECTED:
-                    chatActivityIntent.putExtras(intent.getExtras());
                     startActivity(chatActivityIntent);
                     break;
             }
