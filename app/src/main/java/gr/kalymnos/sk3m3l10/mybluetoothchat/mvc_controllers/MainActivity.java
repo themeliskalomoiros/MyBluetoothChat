@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         super.onCreate(savedInstanceState);
         setupUi();
         bluetoothService = BluetoothServiceImpl.getInstance();
-        bluetoothService.setMainScreenHandler(getHandler());
         setupBluetoothRadio();
         getAndDisplayPairedDevices();
         registerDiscoverDevicesReceiver();

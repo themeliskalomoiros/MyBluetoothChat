@@ -28,13 +28,6 @@ public class BluetoothServiceImpl extends BluetoothService {
 
     @Override
     protected void manageClientsConnectedSocket(String deviceName, BluetoothSocket bluetoothSocket) {
-        Message message = mainScreenHandler.obtainMessage();
-        message.what = HandlerConstants.CONNECTION_SUCCESS;
-        Bundle bundle = new Bundle();
-        bundle.putString(BluetoothConstants.Extras.EXTRA_DEVICE, deviceName);
-        bundle.putParcelable(BluetoothConstants.Extras.EXTRA_SOCKET_WRAPPER,
-                new ParcelableBluetoothSocketWrapper(bluetoothSocket));
-        message.setData(bundle);
-        message.sendToTarget();
+
     }
 }

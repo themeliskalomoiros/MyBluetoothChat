@@ -16,22 +16,11 @@ import gr.kalymnos.sk3m3l10.mybluetoothchat.BuildConfig;
 public abstract class BluetoothService {
 
     protected static final String TAG = "BluetoothService";
-
     private BluetoothAdapter bluetoothAdapter;
-    protected Handler mainScreenHandler, chatScreenHandler;
-
     private Thread serverThread, clientThread;
 
     protected BluetoothService() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    }
-
-    public void setMainScreenHandler(Handler mainScreenHandler) {
-        this.mainScreenHandler = mainScreenHandler;
-    }
-
-    public void setChatScreenHandler(Handler chatScreenHandler) {
-        this.chatScreenHandler = chatScreenHandler;
     }
 
     public UUID getUuid() {
