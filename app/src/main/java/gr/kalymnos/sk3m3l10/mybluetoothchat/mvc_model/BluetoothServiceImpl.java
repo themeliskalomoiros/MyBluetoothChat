@@ -145,4 +145,11 @@ public class BluetoothServiceImpl extends BluetoothService {
             connectionManager.write(bytes);
         }
     }
+
+    @Override
+    public void disconnectFromConnectedDevice() {
+        if (connectionManager != null) {
+            connectionManager.cancel();
+        }
+    }
 }

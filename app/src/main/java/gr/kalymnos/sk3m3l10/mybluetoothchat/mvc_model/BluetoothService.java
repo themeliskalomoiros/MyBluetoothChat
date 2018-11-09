@@ -26,8 +26,17 @@ public abstract class BluetoothService {
         this.context = context;
     }
 
-    public UUID getUuid() {
-        return BluetoothConstants.SECURE_UUID;
+    protected abstract void manageClientsConnectedSocket(BluetoothSocket bluetoothSocket);
+
+    protected abstract void manageServersConnectedSocket(BluetoothSocket socket);
+
+    public abstract void write(byte[] bytes);
+
+    public abstract void disconnectFromConnectedDevice();
+
+
+    protected Context getContext() {
+        return context;
     }
 
     public boolean isBluetoothSupported() {
@@ -53,38 +62,6 @@ public abstract class BluetoothService {
         return null;
     }
 
-    public void startServerMode() {
-        if (serverThread == null) {
-            serverThread = new ServerThread();
-            serverThread.start();
-        }
-    }
-
-    public void stopServerMode() {
-        if (serverThread != null) {
-            serverThread.cancel();
-            serverThread = null;
-        }
-    }
-
-    public void startClientMode(BluetoothDevice deviceToConnect) {
-        if (clientThread == null) {
-            clientThread = new ClientThread(deviceToConnect);
-            clientThread.start();
-        }
-    }
-
-    public void stopClientMode() {
-        if (clientThread != null) {
-            clientThread.cancel();
-            clientThread = null;
-        }
-    }
-
-    protected Context getContext() {
-        return context;
-    }
-
     public Set<BluetoothDevice> getPairedDevices() {
         return bluetoothAdapter.getBondedDevices();
     }
@@ -101,9 +78,10 @@ public abstract class BluetoothService {
         return bluetoothAdapter.isDiscovering();
     }
 
-    protected abstract void manageClientsConnectedSocket(BluetoothSocket bluetoothSocket);
+    public UUID getUuid() {
+        return BluetoothConstants.SECURE_UUID;
+    }
 
-    protected abstract void manageServersConnectedSocket(BluetoothSocket socket);
 
     private class ServerThread extends Thread {
         private final BluetoothServerSocket serverSocket;
@@ -158,6 +136,20 @@ public abstract class BluetoothService {
             } catch (IOException e) {
                 Log.e(TAG, "Could not close the connect socket", e);
             }
+        }
+    }
+
+    public void startServerMode() {
+        if (serverThread == null) {
+            serverThread = new ServerThread();
+            serverThread.start();
+        }
+    }
+
+    public void stopServerMode() {
+        if (serverThread != null) {
+            serverThread.cancel();
+            serverThread = null;
         }
     }
 
@@ -219,6 +211,18 @@ public abstract class BluetoothService {
         }
     }
 
-    public abstract void write(byte[] bytes);
+    public void startClientMode(BluetoothDevice deviceToConnect) {
+        if (clientThread == null) {
+            clientThread = new ClientThread(deviceToConnect);
+            clientThread.start();
+        }
+    }
+
+    public void stopClientMode() {
+        if (clientThread != null) {
+            clientThread.cancel();
+            clientThread = null;
+        }
+    }
 
 }
