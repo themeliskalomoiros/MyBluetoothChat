@@ -13,8 +13,10 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -22,17 +24,20 @@ import java.util.List;
 import java.util.Set;
 
 import gr.kalymnos.sk3m3l10.mybluetoothchat.R;
+import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothServiceImpl;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen.MainScreenViewMvc;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen.MainScreenViewMvcImpl;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.utils.BluetoothDeviceUtils;
 
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_CLIENT_CONNECTED;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_DEVICE_FOUND;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_DISCOVERY_FINISHED;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_DISCOVERY_STARTED;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_REQUEST_DISCOVERABLE;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_REQUEST_ENABLE;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_SERVER_CONNECTED;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.DISCOVERABLE_TIME_IN_SECONDS;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Extras.EXTRA_DEVICE;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Extras.EXTRA_DISCOVERABLE_DURATION;
@@ -49,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
     private BluetoothService bluetoothService;
     private Set<BluetoothDevice> devices = new LinkedHashSet<>();
 
-    private final BroadcastReceiver discoverDevicesReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver deviceReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
@@ -68,14 +73,29 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         }
     };
 
+    private final BroadcastReceiver connectionEventReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case ACTION_CLIENT_CONNECTED:
+                    Toast.makeText(context, "Client connected!", Toast.LENGTH_LONG).show();
+                    break;
+                case ACTION_SERVER_CONNECTED:
+                    Toast.makeText(context, "Server connected!", Toast.LENGTH_LONG).show();
+                    break;
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupUi();
-        bluetoothService = BluetoothServiceImpl.getInstance(this);
+        bluetoothService = BluetoothServiceImpl.getInstance(getApplicationContext());
         setupBluetoothRadio();
         getAndDisplayPairedDevices();
-        registerDiscoverDevicesReceiver();
+        registerDeviceReceiver();
+        registerConnectionReceiver();
         // Because via bluetooth you are able to get a device's location android
         // needs to get user's permission at runtime
         checkLocationPermissionToStartDiscoverDevices();
@@ -137,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(discoverDevicesReceiver);
+        unregisterReceivers();
     }
 
     private void setupBluetoothRadio() {
@@ -186,13 +206,20 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         viewMvc.bindBluetoothDeviceNames(BluetoothDeviceUtils.getDeviceNamesList(devices));
     }
 
-    private void registerDiscoverDevicesReceiver() {
+    private void registerDeviceReceiver() {
         IntentFilter filterFound = new IntentFilter(ACTION_DEVICE_FOUND);
         IntentFilter filterDiscoveryStarted = new IntentFilter(ACTION_DISCOVERY_STARTED);
         IntentFilter filterDiscoveryFinished = new IntentFilter(ACTION_DISCOVERY_FINISHED);
-        registerReceiver(discoverDevicesReceiver, filterDiscoveryStarted);
-        registerReceiver(discoverDevicesReceiver, filterFound);
-        registerReceiver(discoverDevicesReceiver, filterDiscoveryFinished);
+        registerReceiver(deviceReceiver, filterDiscoveryStarted);
+        registerReceiver(deviceReceiver, filterFound);
+        registerReceiver(deviceReceiver, filterDiscoveryFinished);
+    }
+
+    private void registerConnectionReceiver() {
+        IntentFilter clientConnectedFilter = new IntentFilter(ACTION_CLIENT_CONNECTED);
+        IntentFilter serverConnectedFilter = new IntentFilter(ACTION_SERVER_CONNECTED);
+        LocalBroadcastManager.getInstance(this).registerReceiver(connectionEventReceiver, clientConnectedFilter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(connectionEventReceiver, serverConnectedFilter);
     }
 
     private void setupUi() {
@@ -205,5 +232,10 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         viewMvc = new MainScreenViewMvcImpl(LayoutInflater.from(this), null);
         viewMvc.setOnBluetoothScanClickListener(this);
         viewMvc.setOnDeviceItemClickListener(this);
+    }
+
+    private void unregisterReceivers() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(deviceReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(connectionEventReceiver);
     }
 }
