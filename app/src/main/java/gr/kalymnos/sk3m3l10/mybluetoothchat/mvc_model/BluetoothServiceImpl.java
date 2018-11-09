@@ -11,7 +11,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_CLIENT_CONNECTED;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_DISCONNECTED;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_MESSAGE_RECEIVED;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_SERVER_CONNECTED;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Extras.EXTRA_MESSAGE;
 
 public class BluetoothServiceImpl extends BluetoothService {
 
@@ -101,14 +104,20 @@ public class BluetoothServiceImpl extends BluetoothService {
                     broadcastReceivedMessage();
                 } catch (IOException e) {
                     Log.d(TAG, "Input stream was disconnected", e);
+                    broadcastDisconnection();
                     break;
                 }
             }
         }
 
+        private void broadcastDisconnection() {
+            Intent intent = new Intent(ACTION_DISCONNECTED);
+            LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+        }
+
         private void broadcastReceivedMessage() {
-            Intent intent = new Intent(BluetoothConstants.Actions.ACTION_MESSAGE_RECEIVED);
-            intent.putExtra(BluetoothConstants.Extras.EXTRA_MESSAGE,new String(buffer));
+            Intent intent = new Intent(ACTION_MESSAGE_RECEIVED);
+            intent.putExtra(EXTRA_MESSAGE, new String(buffer));
             LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
         }
 
