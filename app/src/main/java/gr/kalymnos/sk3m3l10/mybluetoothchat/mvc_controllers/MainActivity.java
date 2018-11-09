@@ -16,7 +16,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 import gr.kalymnos.sk3m3l10.mybluetoothchat.R;
-import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothServiceImpl;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.main_screen.MainScreenViewMvc;
@@ -76,14 +74,16 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
     private final BroadcastReceiver connectionEventReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Intent chatActivityIntent = new Intent(MainActivity.this, ChatActivity.class);
+
             switch (intent.getAction()) {
                 case ACTION_CLIENT_CONNECTED:
-                    Intent chatActivityIntent = new Intent(MainActivity.this,ChatActivity.class);
                     chatActivityIntent.putExtras(intent.getExtras());
                     startActivity(chatActivityIntent);
                     break;
                 case ACTION_SERVER_CONNECTED:
-                    Toast.makeText(context, "Server connected!", Toast.LENGTH_LONG).show();
+                    chatActivityIntent.putExtras(intent.getExtras());
+                    startActivity(chatActivityIntent);
                     break;
             }
         }
