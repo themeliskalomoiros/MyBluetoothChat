@@ -77,4 +77,10 @@ public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc
         viewMvc = new ChatScreenViewMvcImpl(LayoutInflater.from(this), null);
         viewMvc.setOnSendClickListener(this);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        bluetoothService.disconnectFromConnectedDevice();
+    }
 }
