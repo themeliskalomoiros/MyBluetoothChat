@@ -13,6 +13,7 @@ public interface BluetoothConstants {
     interface Actions {
         String ACTION_CLIENT_CONNECTED = "action client connected";
         String ACTION_SERVER_CONNECTED = "action server connected";
+        String ACTION_DISCONNECTED = "action disconnected";
         String ACTION_DEVICE_FOUND = BluetoothDevice.ACTION_FOUND;
         String ACTION_DISCOVERY_STARTED = BluetoothAdapter.ACTION_DISCOVERY_STARTED;
         String ACTION_DISCOVERY_FINISHED = BluetoothAdapter.ACTION_DISCOVERY_FINISHED;
