@@ -16,13 +16,14 @@ public interface BluetoothConstants {
         String ACTION_DEVICE_FOUND = BluetoothDevice.ACTION_FOUND;
         String ACTION_DISCOVERY_STARTED = BluetoothAdapter.ACTION_DISCOVERY_STARTED;
         String ACTION_DISCOVERY_FINISHED = BluetoothAdapter.ACTION_DISCOVERY_FINISHED;
+        String ACTION_MESSAGE_RECEIVED = "action received message";
         String ACTION_REQUEST_ENABLE = BluetoothAdapter.ACTION_REQUEST_ENABLE;
         String ACTION_REQUEST_DISCOVERABLE = BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE;
     }
 
     interface Extras {
         String EXTRA_DEVICE = BluetoothDevice.EXTRA_DEVICE;
-        String EXTRA_DEVICE_NAME = "extra device name";
+        String EXTRA_MESSAGE = "extra message";
         String EXTRA_SOCKET_WRAPPER = "extra socket wrapper";
         String EXTRA_DISCOVERABLE_DURATION = BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION;
     }
