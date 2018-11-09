@@ -5,8 +5,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.IOException;
@@ -19,12 +17,13 @@ public abstract class BluetoothService {
 
     protected static final String TAG = "BluetoothService";
     private BluetoothAdapter bluetoothAdapter;
-    private Thread serverThread, clientThread;
+    private ServerThread serverThread;
+    private ClientThread clientThread;
     private Context context;
 
     protected BluetoothService(Context context) {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        this.context=context;
+        this.context = context;
     }
 
     public UUID getUuid() {
@@ -45,6 +44,15 @@ public abstract class BluetoothService {
         return false;
     }
 
+    public String getConnectedDeviceName() {
+        if (clientThread != null) {
+            return clientThread.getConnectedDeviceName();
+        } else if (serverThread != null) {
+            return serverThread.getConnectedDeviceName();
+        }
+        return null;
+    }
+
     public void startServerMode() {
         if (serverThread == null) {
             serverThread = new ServerThread();
@@ -54,7 +62,7 @@ public abstract class BluetoothService {
 
     public void stopServerMode() {
         if (serverThread != null) {
-            ((ServerThread) serverThread).cancel();
+            serverThread.cancel();
             serverThread = null;
         }
     }
@@ -68,7 +76,7 @@ public abstract class BluetoothService {
 
     public void stopClientMode() {
         if (clientThread != null) {
-            ((ClientThread) clientThread).cancel();
+            clientThread.cancel();
             clientThread = null;
         }
     }
@@ -93,12 +101,13 @@ public abstract class BluetoothService {
         return bluetoothAdapter.isDiscovering();
     }
 
-    protected abstract void manageClientsConnectedSocket(String deviceName, BluetoothSocket bluetoothSocket);
+    protected abstract void manageClientsConnectedSocket(BluetoothSocket bluetoothSocket);
 
     protected abstract void manageServersConnectedSocket(BluetoothSocket socket);
 
     private class ServerThread extends Thread {
         private final BluetoothServerSocket serverSocket;
+        private BluetoothSocket socket;
 
         ServerThread() {
             // Using temp varialbe because serverSocket is final
@@ -113,7 +122,6 @@ public abstract class BluetoothService {
 
         @Override
         public void run() {
-            BluetoothSocket socket;
             // Keep listening until exception occurs or a socket is returned.
             while (true) {
                 try {
@@ -137,6 +145,10 @@ public abstract class BluetoothService {
                 }
             }
 
+        }
+
+        private String getConnectedDeviceName() {
+            return socket.getRemoteDevice().getName();
         }
 
         // Closes the connect socket and causes the thread to finish
@@ -190,7 +202,11 @@ public abstract class BluetoothService {
 
             // The connection attempt succeeded. Perform work associated with
             // the connection in a separate thread.
-            manageClientsConnectedSocket(connectedDevice.getName(), bluetoothSocket);
+            manageClientsConnectedSocket(bluetoothSocket);
+        }
+
+        private String getConnectedDeviceName() {
+            return connectedDevice.getName();
         }
 
         // Closes the client socket and causes the thread to finish
@@ -201,7 +217,8 @@ public abstract class BluetoothService {
                 Log.e(TAG, "Could not close the connect socket", e);
             }
         }
-
     }
+
+    public abstract void write(byte[] bytes);
 
 }
