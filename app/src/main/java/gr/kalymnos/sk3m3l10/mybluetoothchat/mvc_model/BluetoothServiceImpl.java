@@ -2,10 +2,6 @@ package gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model;
 
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.os.Bundle;
-import android.os.Message;
-
-import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_controllers.HandlerConstants;
 
 public class BluetoothServiceImpl extends BluetoothService {
 

@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -41,7 +40,7 @@ import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.RequestCodes.REQUEST_CODE_ENABLE_BT;
 
 public class MainActivity extends AppCompatActivity implements MainScreenViewMvc.OnDeviceItemClickListener,
-        MainScreenViewMvc.OnBluetoothScanClickListener, HandlerProvider {
+        MainScreenViewMvc.OnBluetoothScanClickListener {
 
     private static final int REQUEST_CODE_COARSE_LOCATION = 123;
 
@@ -206,20 +205,5 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         viewMvc = new MainScreenViewMvcImpl(LayoutInflater.from(this), null);
         viewMvc.setOnBluetoothScanClickListener(this);
         viewMvc.setOnDeviceItemClickListener(this);
-    }
-
-    @Override
-    public Handler getHandler() {
-        return new Handler((msg) -> {
-            switch (msg.what) {
-                case HandlerConstants.CONNECTION_SUCCESS:
-                    Intent intent = new Intent(MainActivity.this, ChatActivity.class);
-                    intent.putExtras(msg.getData());
-                    MainActivity.this.startActivity(intent);
-                    break;
-            }
-            // True if no further handling is desired
-            return true;
-        });
     }
 }
