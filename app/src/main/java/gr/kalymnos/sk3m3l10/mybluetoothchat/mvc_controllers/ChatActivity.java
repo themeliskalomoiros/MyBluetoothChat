@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.widget.Toast;
 
+import gr.kalymnos.sk3m3l10.mybluetoothchat.R;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothServiceImpl;
@@ -33,8 +34,8 @@ public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc
                     Toast.makeText(context, intent.getStringExtra(BluetoothConstants.Extras.EXTRA_MESSAGE), Toast.LENGTH_SHORT).show();
                     break;
                 case ACTION_DISCONNECTED:
-                    // TODO: Display the message
-                    Toast.makeText(context, "Disconnected!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, R.string.connection_terminated_label, Toast.LENGTH_SHORT).show();
+                    finish();
                     break;
             }
         }

@@ -13,4 +13,5 @@
     <string name="discovery_in_progress_label">Discovery in progress</string>
     <string name="ask_permition_label">Ask for permission</string>
     <string name="enable_label">Enable</string>
+    <string name="connection_terminated_label">Connection terminated</string>
 </resources>
