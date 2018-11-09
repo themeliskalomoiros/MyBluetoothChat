@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupUi();
-        bluetoothService = BluetoothServiceImpl.getInstance();
+        bluetoothService = BluetoothServiceImpl.getInstance(this);
         setupBluetoothRadio();
         getAndDisplayPairedDevices();
         registerDiscoverDevicesReceiver();

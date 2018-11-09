@@ -4,7 +4,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.IOException;
@@ -18,9 +20,11 @@ public abstract class BluetoothService {
     protected static final String TAG = "BluetoothService";
     private BluetoothAdapter bluetoothAdapter;
     private Thread serverThread, clientThread;
+    private Context context;
 
-    protected BluetoothService() {
+    protected BluetoothService(Context context) {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        this.context=context;
     }
 
     public UUID getUuid() {
@@ -67,6 +71,10 @@ public abstract class BluetoothService {
             ((ClientThread) clientThread).cancel();
             clientThread = null;
         }
+    }
+
+    protected Context getContext() {
+        return context;
     }
 
     public Set<BluetoothDevice> getPairedDevices() {
