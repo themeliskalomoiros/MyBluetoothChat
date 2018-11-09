@@ -1,61 +1,73 @@
 package gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_controllers;
 
-import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.widget.Toast;
 
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants;
-import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.ParcelableBluetoothSocketWrapper;
+import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothService;
+import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothServiceImpl;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.chat_screen.ChatScreenViewMvc;
 import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.chat_screen.ChatScreenViewMvcImpl;
+
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_MESSAGE_RECEIVED;
 
 public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc.OnSendClickListener {
 
     private ChatScreenViewMvc viewMvc;
-    private BluetoothSocket bluetoothSocket;
+    private BluetoothService bluetoothService;
+
+    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case ACTION_MESSAGE_RECEIVED:
+                    // TODO: Display the message
+                    Toast.makeText(context, intent.getStringExtra(BluetoothConstants.Extras.EXTRA_MESSAGE), Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        bluetoothSocket = getBluetoothSocket();
+        bluetoothService = BluetoothServiceImpl.getInstance(getApplicationContext());
         setupUi();
+        registerMessageReceiver();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
+    }
+
+    private void registerMessageReceiver() {
+        IntentFilter filter = new IntentFilter(ACTION_MESSAGE_RECEIVED);
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, filter);
     }
 
     @Override
     public void onSendClicked(String msg) {
-        Toast.makeText(this, "clicked!", Toast.LENGTH_SHORT).show();
+        bluetoothService.write(msg.getBytes());
     }
 
     private void setupUi() {
         initializeViewMvc();
         setSupportActionBar(viewMvc.getToolbar());
-        getSupportActionBar().setTitle(getDeviceName());
+        viewMvc.bindToolbarTitle(bluetoothService.getConnectedDeviceName());
         setContentView(viewMvc.getRootView());
     }
 
     private void initializeViewMvc() {
         viewMvc = new ChatScreenViewMvcImpl(LayoutInflater.from(this), null);
         viewMvc.setOnSendClickListener(this);
-    }
-
-    private String getDeviceName() {
-        Bundle extras = getIntent().getExtras();
-        boolean bundleIncludesName = extras != null && extras.containsKey(BluetoothConstants.Extras.EXTRA_DEVICE_NAME);
-        if (bundleIncludesName) {
-            return extras.getString(BluetoothConstants.Extras.EXTRA_DEVICE_NAME);
-        }
-        return null;
-    }
-
-    private BluetoothSocket getBluetoothSocket() {
-        Bundle extras = getIntent().getExtras();
-        boolean bundleIncludesParcelableSocketWrapper = extras != null && extras.containsKey(BluetoothConstants.Extras.EXTRA_SOCKET_WRAPPER);
-        if (bundleIncludesParcelableSocketWrapper) {
-            ParcelableBluetoothSocketWrapper wrapper = extras.getParcelable(BluetoothConstants.Extras.EXTRA_SOCKET_WRAPPER);
-            return wrapper.getSocket();
-        }
-        return null;
     }
 }
