@@ -19,7 +19,7 @@ import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.
 public class BluetoothServiceImpl extends BluetoothService {
 
     private static BluetoothService instance = null;
-    private ConnectionManager connectionManager;
+    private ConversationManager conversationManager;
 
     private BluetoothServiceImpl(Context context) {
         super(context);
@@ -36,31 +36,31 @@ public class BluetoothServiceImpl extends BluetoothService {
     protected void manageServersConnectedSocket(BluetoothSocket socket) {
         Intent serverData = new Intent(ACTION_SERVER_CONNECTED);
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(serverData);
-        startConnectionManager(socket);
+        startConversationManager(socket);
     }
 
     @Override
     protected void manageClientsConnectedSocket(BluetoothSocket socket) {
         Intent clientData = new Intent(ACTION_CLIENT_CONNECTED);
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(clientData);
-        startConnectionManager(socket);
+        startConversationManager(socket);
     }
 
-    public void startConnectionManager(BluetoothSocket socket) {
-        if (connectionManager == null) {
-            connectionManager = new ConnectionManager(socket);
-            connectionManager.start();
+    public void startConversationManager(BluetoothSocket socket) {
+        if (conversationManager == null) {
+            conversationManager = new ConversationManager(socket);
+            conversationManager.start();
         }
     }
 
-    public void stopConnectionManager() {
-        if (connectionManager != null) {
-            connectionManager.cancel();
-            connectionManager = null;
+    public void stopConversationManager() {
+        if (conversationManager != null) {
+            conversationManager.cancel();
+            conversationManager = null;
         }
     }
 
-    private class ConnectionManager extends Thread {
+    private class ConversationManager extends Thread {
         private static final int BUFFER_SIZE = 1024;
 
         private final BluetoothSocket socket;
@@ -69,7 +69,7 @@ public class BluetoothServiceImpl extends BluetoothService {
         private final OutputStream outputStream;
         private byte[] buffer; // Buffer to store the stream
 
-        public ConnectionManager(BluetoothSocket socket) {
+        public ConversationManager(BluetoothSocket socket) {
             this.socket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
@@ -141,15 +141,15 @@ public class BluetoothServiceImpl extends BluetoothService {
 
     @Override
     public void write(byte[] bytes) {
-        if (connectionManager != null) {
-            connectionManager.write(bytes);
+        if (conversationManager != null) {
+            conversationManager.write(bytes);
         }
     }
 
     @Override
     public void disconnectFromConnectedDevice() {
-        if (connectionManager != null) {
-            connectionManager.cancel();
+        if (conversationManager != null) {
+            conversationManager.cancel();
         }
     }
 }
