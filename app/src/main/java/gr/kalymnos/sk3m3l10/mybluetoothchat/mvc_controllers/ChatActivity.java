@@ -52,6 +52,7 @@ public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc
     protected void onDestroy() {
         super.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
+        bluetoothService.releaseChatResources();
     }
 
     private void registerMessageReceiver() {
@@ -76,11 +77,5 @@ public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc
     private void initializeViewMvc() {
         viewMvc = new ChatScreenViewMvcImpl(LayoutInflater.from(this), null);
         viewMvc.setOnSendClickListener(this);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        bluetoothService.releaseChatResources();
     }
 }
