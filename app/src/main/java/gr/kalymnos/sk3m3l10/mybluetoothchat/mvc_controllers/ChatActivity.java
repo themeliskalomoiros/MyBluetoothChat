@@ -42,9 +42,9 @@ public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc
 
     private String getDeviceName() {
         Bundle extras = getIntent().getExtras();
-        boolean bundleIncludesName = extras != null && extras.containsKey(BluetoothConstants.Extras.EXTRA_DEVICE);
+        boolean bundleIncludesName = extras != null && extras.containsKey(BluetoothConstants.Extras.EXTRA_DEVICE_NAME);
         if (bundleIncludesName) {
-            return extras.getString(BluetoothConstants.Extras.EXTRA_DEVICE);
+            return extras.getString(BluetoothConstants.Extras.EXTRA_DEVICE_NAME);
         }
         return null;
     }

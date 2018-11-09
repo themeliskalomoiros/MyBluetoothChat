@@ -78,7 +78,9 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
                 case ACTION_CLIENT_CONNECTED:
-                    Toast.makeText(context, "Client connected!", Toast.LENGTH_LONG).show();
+                    Intent chatActivityIntent = new Intent(MainActivity.this,ChatActivity.class);
+                    chatActivityIntent.putExtras(intent.getExtras());
+                    startActivity(chatActivityIntent);
                     break;
                 case ACTION_SERVER_CONNECTED:
                     Toast.makeText(context, "Server connected!", Toast.LENGTH_LONG).show();
