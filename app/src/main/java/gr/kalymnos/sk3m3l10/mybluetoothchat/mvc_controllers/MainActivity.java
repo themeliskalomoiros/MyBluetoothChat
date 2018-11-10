@@ -101,6 +101,14 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         checkLocationPermissionToStartDiscoverDevices();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (bluetoothService.isDeviceDiscoverable()){
+            bluetoothService.startServerMode();
+        }
+    }
+
     private void checkLocationPermissionToStartDiscoverDevices() {
         boolean permissionNotGranted = ContextCompat.checkSelfPermission
                 (this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED;
