@@ -26,9 +26,9 @@ public abstract class BluetoothService {
         this.context = context;
     }
 
-    protected abstract void manageClientsConnectedSocket(BluetoothSocket bluetoothSocket);
+    protected abstract void manageClientConnectedSocket(BluetoothSocket bluetoothSocket);
 
-    protected abstract void manageServersConnectedSocket(BluetoothSocket socket);
+    protected abstract void manageServerConnectedSocket(BluetoothSocket socket);
 
     public abstract void write(String message);
 
@@ -122,7 +122,7 @@ public abstract class BluetoothService {
                 if (socket != null) {
                     // A connection was accepted. Perform work associated with the connection
                     // in a seperate thread.
-                    manageServersConnectedSocket(socket);
+                    manageServerConnectedSocket(socket);
                     try {
                         // We do not need any more connections because we will chat only with
                         // this device, so we close the server socket ( also consumibg hell of resources).
@@ -210,7 +210,7 @@ public abstract class BluetoothService {
 
             // The connection attempt succeeded. Perform work associated with
             // the connection in a separate thread.
-            manageClientsConnectedSocket(bluetoothSocket);
+            manageClientConnectedSocket(bluetoothSocket);
         }
 
         private String getConnectedDeviceName() {

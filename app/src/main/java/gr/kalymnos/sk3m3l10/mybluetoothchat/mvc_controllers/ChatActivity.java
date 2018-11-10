@@ -46,7 +46,6 @@ public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bluetoothService = BluetoothServiceImpl.getInstance(getApplicationContext());
-        bluetoothService.stopServerMode();
         setupUi();
         registerMessageReceiver();
     }

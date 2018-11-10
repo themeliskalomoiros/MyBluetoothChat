@@ -34,14 +34,14 @@ public class BluetoothServiceImpl extends BluetoothService {
     }
 
     @Override
-    protected void manageServersConnectedSocket(BluetoothSocket socket) {
+    protected void manageServerConnectedSocket(BluetoothSocket socket) {
         Intent serverData = new Intent(ACTION_SERVER_CONNECTED);
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(serverData);
         startChatManager(socket);
     }
 
     @Override
-    protected void manageClientsConnectedSocket(BluetoothSocket socket) {
+    protected void manageClientConnectedSocket(BluetoothSocket socket) {
         Intent clientData = new Intent(ACTION_CLIENT_CONNECTED);
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(clientData);
         startChatManager(socket);

@@ -101,14 +101,6 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         checkLocationPermissionToStartDiscoverDevices();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (bluetoothService.isDeviceDiscoverable()){
-            bluetoothService.startServerMode();
-        }
-    }
-
     private void checkLocationPermissionToStartDiscoverDevices() {
         boolean permissionNotGranted = ContextCompat.checkSelfPermission
                 (this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED;
@@ -140,7 +132,9 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
                     // Reaching this point Bluetooth enabled for the first time.
                     // Start a discovery automatically.
                     bluetoothService.startDiscovery();
-                    askUserToSetDeviceAsDiscoverable();
+                    if (!bluetoothService.isDeviceDiscoverable()) {
+                        askUserToSetDeviceAsDiscoverable();
+                    }
                 } else if (resultCode == RESULT_CANCELED) {
                     Snackbar enableBluetoothSnackbar = Snackbar.make(viewMvc.getRootView(), R.string.bluetooth_enabled_canceld_label, Snackbar.LENGTH_INDEFINITE);
                     enableBluetoothSnackbar.setAction(R.string.enable_label, (view) -> startActivityForResult(new Intent(ACTION_REQUEST_ENABLE), REQUEST_CODE_ENABLE_BT));
@@ -174,10 +168,13 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
         if (!bluetoothService.isBluetoothSupported()) {
             Snackbar.make(viewMvc.getRootView(), R.string.bluetooth_not_supported_label, Snackbar.LENGTH_LONG).show();
         }
+
         if (!bluetoothService.isBluetoothEnabled()) {
             startActivityForResult(new Intent(ACTION_REQUEST_ENABLE), REQUEST_CODE_ENABLE_BT);
         } else {
-            askUserToSetDeviceAsDiscoverable();
+            if (!bluetoothService.isDeviceDiscoverable()) {
+                askUserToSetDeviceAsDiscoverable();
+            }
         }
     }
 
@@ -201,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
 
     @Override
     public void onDeviceItemClicked(int position) {
-        if (devices.size()>0){
+        if (devices.size() > 0) {
             List<BluetoothDevice> devicesList = new ArrayList<>(devices);
             bluetoothService.startClientMode(devicesList.get(position));
         }
