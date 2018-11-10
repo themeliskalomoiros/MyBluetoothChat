@@ -132,11 +132,12 @@ public class BluetoothServiceImpl extends BluetoothService {
 
         private void cancel() {
             try {
-                Log.d(TAG,"Attempting to close the socket");
-                socket.close();
-                Log.d(TAG,"Socket closed");
+                Log.d(TAG,"Closing streams");
+                inputStream.close();
+                outputStream.close();
+                Log.d(TAG,"Streams closed");
             } catch (IOException e) {
-                Log.e(TAG, "Could not close the connect socket", e);
+                Log.e(TAG, "Could not close input/output stream/s.", e);
             }
         }
 
