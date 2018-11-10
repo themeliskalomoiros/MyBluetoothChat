@@ -143,7 +143,9 @@ public abstract class BluetoothService {
         // Closes the connect socket and causes the thread to finish
         public void cancel() {
             try {
+                Log.d(TAG,"Attempt to close server socket");
                 serverSocket.close();
+                Log.d(TAG,"Server socket closed.");
             } catch (IOException e) {
                 Log.e(TAG, "Could not close the connect socket", e);
             }
@@ -218,7 +220,9 @@ public abstract class BluetoothService {
         // Closes the client socket and causes the thread to finish
         public void cancel() {
             try {
+                Log.d(TAG,"Attempt to close socket.");
                 bluetoothSocket.close();
+                Log.d(TAG,"Socket closed.");
             } catch (IOException e) {
                 Log.e(TAG, "Could not close the connect socket", e);
             }
