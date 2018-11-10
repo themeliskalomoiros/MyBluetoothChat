@@ -19,6 +19,7 @@ import gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_views.chat_screen.ChatScreenView
 
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_DISCONNECTED;
 import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_MESSAGE_RECEIVED;
+import static gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model.BluetoothConstants.Actions.ACTION_SERVER_CONNECTED;
 
 public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc.OnSendClickListener {
 
@@ -46,6 +47,7 @@ public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bluetoothService = BluetoothServiceImpl.getInstance(getApplicationContext());
+        bluetoothService.stopServerMode();
         setupUi();
         registerMessageReceiver();
     }

@@ -195,7 +195,6 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
     public void onDeviceItemClicked(int position) {
         if (devices.size()>0){
             List<BluetoothDevice> devicesList = new ArrayList<>(devices);
-            bluetoothService.stopServerMode();
             bluetoothService.startClientMode(devicesList.get(position));
         }
     }
