@@ -56,7 +56,6 @@ public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc
         LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
         bluetoothService.releaseChatResources();
         bluetoothService.stopClientMode();
-        bluetoothService.stopServerMode();
     }
 
     private void registerMessageReceiver() {
