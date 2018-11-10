@@ -181,7 +181,9 @@ public abstract class BluetoothService {
             try {
                 // Connect to the remote device through the socket. This call blocks
                 // until it succeeds or throws an exception.
+                Log.d(TAG,"Client: Before connecting to bluetoothsocket.");
                 bluetoothSocket.connect();
+                Log.d(TAG,"Client: bluetoothSocket.connect() returned.");
             } catch (IOException e) {
                 // Unable to connect; close the socket and return
                 try {
@@ -222,6 +224,7 @@ public abstract class BluetoothService {
         if (clientThread != null) {
             clientThread.cancel();
             clientThread = null;
+            Log.d(TAG,"Stopped client mode.");
         }
     }
 
