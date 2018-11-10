@@ -114,7 +114,7 @@ public abstract class BluetoothService {
                     manageServersConnectedSocket(socket);
                     try {
                         // We do not need any more connections because we will chat only with
-                        // this device, so we close the server socket because it consumes hell of resources.
+                        // this device, so we close the server socket ( also consumibg hell of resources).
                         serverSocket.close();
                     } catch (IOException e) {
                         Log.e(TAG, "Could not close() the server socket");
