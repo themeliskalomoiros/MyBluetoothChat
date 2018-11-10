@@ -93,6 +93,7 @@ public abstract class BluetoothService {
     private class ServerThread extends Thread {
         private final BluetoothServerSocket serverSocket;
         private BluetoothSocket socket;
+        private static final String TAG = "skemelio " + "ServerThread";
 
         ServerThread() {
             // Using temp varialbe because serverSocket is final
@@ -103,6 +104,7 @@ public abstract class BluetoothService {
                 Log.e(TAG, "Socket's listen() method failed", e);
             }
             serverSocket = tmp;
+            Log.d(TAG, "new instance created.");
         }
 
         @Override
@@ -110,7 +112,9 @@ public abstract class BluetoothService {
             // Keep listening until exception occurs or a socket is returned.
             while (true) {
                 try {
+                    Log.d(TAG, "accepting connections from other devices.");
                     socket = serverSocket.accept();
+                    Log.d(TAG, "a connection was accepted.");
                 } catch (IOException e) {
                     Log.e(TAG, "Socket's accept() method failed", e);
                     break;
@@ -162,8 +166,8 @@ public abstract class BluetoothService {
 
     private class ClientThread extends Thread {
         private final BluetoothSocket bluetoothSocket;
-
         private final BluetoothDevice connectedDevice;
+        private static final String TAG = "skemelio " + "ClientThread";
 
         public ClientThread(BluetoothDevice device) {
             // Use a temporary object that is later assigned to bluetoothSocket
@@ -178,6 +182,7 @@ public abstract class BluetoothService {
             }
 
             bluetoothSocket = tmp;
+            Log.d(TAG, "ClientThread: new instance created.");
         }
 
         @Override
@@ -188,9 +193,9 @@ public abstract class BluetoothService {
             try {
                 // Connect to the remote device through the socket. This call blocks
                 // until it succeeds or throws an exception.
-                Log.d(TAG, "Client: Before connecting to bluetoothsocket.");
+                Log.d(TAG, "Connecting to server...");
                 bluetoothSocket.connect();
-                Log.d(TAG, "Client: bluetoothSocket.connect() returned.");
+                Log.d(TAG, "Connection success.");
             } catch (IOException e) {
                 // Unable to connect; close the socket and return
                 try {
