@@ -35,6 +35,7 @@ public class ChatActivity extends AppCompatActivity implements ChatScreenViewMvc
                     break;
                 case ACTION_DISCONNECTED:
                     Toast.makeText(context, R.string.connection_terminated_label, Toast.LENGTH_SHORT).show();
+                    bluetoothService.stopClientMode();
                     finish();
                     break;
             }
