@@ -3,6 +3,7 @@ package gr.kalymnos.sk3m3l10.mybluetoothchat.mvc_model;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -62,7 +63,7 @@ public class BluetoothServiceImpl extends BluetoothService {
 
     private class ChatManager extends Thread {
         private static final int BUFFER_SIZE = 1024;
-
+        private static final String TAG = "skemelio "+"ChatManager";
         private final BluetoothSocket socket;
 
         private final InputStream inputStream;
@@ -131,7 +132,9 @@ public class BluetoothServiceImpl extends BluetoothService {
 
         private void cancel() {
             try {
+                Log.d(TAG,"Attempting to close the socket");
                 socket.close();
+                Log.d(TAG,"Socket closed");
             } catch (IOException e) {
                 Log.e(TAG, "Could not close the connect socket", e);
             }
