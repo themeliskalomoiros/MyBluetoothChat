@@ -158,6 +158,8 @@ public class MainActivity extends AppCompatActivity implements MainScreenViewMvc
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceivers();
+        bluetoothService.stopServerMode();
+        bluetoothService.stopClientMode();
     }
 
     private void setupBluetoothRadio() {
