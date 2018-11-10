@@ -53,6 +53,13 @@ public abstract class BluetoothService {
         return false;
     }
 
+    public boolean isDeviceDiscoverable() {
+        if (bluetoothAdapter.getScanMode() == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+            return true;
+        }
+        return false;
+    }
+
     public String getConnectedDeviceName() {
         if (clientThread != null) {
             return clientThread.getConnectedDeviceName();
@@ -181,9 +188,9 @@ public abstract class BluetoothService {
             try {
                 // Connect to the remote device through the socket. This call blocks
                 // until it succeeds or throws an exception.
-                Log.d(TAG,"Client: Before connecting to bluetoothsocket.");
+                Log.d(TAG, "Client: Before connecting to bluetoothsocket.");
                 bluetoothSocket.connect();
-                Log.d(TAG,"Client: bluetoothSocket.connect() returned.");
+                Log.d(TAG, "Client: bluetoothSocket.connect() returned.");
             } catch (IOException e) {
                 // Unable to connect; close the socket and return
                 try {
@@ -224,7 +231,7 @@ public abstract class BluetoothService {
         if (clientThread != null) {
             clientThread.cancel();
             clientThread = null;
-            Log.d(TAG,"Stopped client mode.");
+            Log.d(TAG, "Stopped client mode.");
         }
     }
 
