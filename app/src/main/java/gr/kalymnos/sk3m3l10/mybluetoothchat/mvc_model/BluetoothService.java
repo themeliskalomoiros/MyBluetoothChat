@@ -213,6 +213,8 @@ public abstract class BluetoothService {
             // The connection attempt succeeded. Perform work associated with
             // the connection in a separate thread.
             manageClientConnectedSocket(bluetoothSocket);
+            // This device now is a client, it should not listen to other devices
+            stopServerMode();
         }
 
         private String getConnectedDeviceName() {
